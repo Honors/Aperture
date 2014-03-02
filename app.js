@@ -1,4 +1,4 @@
-var scene = new Scene();
+var scene = new Scene(document.getElementById('map'));
 scene.makeRoom(44, 45, 15);
 var obstructions = [
   new Rectangle([36.125, 38.25, 2], [5.25, 1.5, 4]),

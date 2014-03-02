@@ -1,16 +1,18 @@
-var Scene = function() {
+var Scene = function(map) {
   var scene = new THREE.Scene();
   var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 1000);
   this.scene = scene;
+  this.map = map;
   this.camera = camera;
   this.init();
 };
 Scene.prototype.init = function() {
   var renderer = new THREE.WebGLRenderer();
   renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.domElement.className += "three-js";
   document.body.appendChild(renderer.domElement);
   this.renderer = renderer;
-  new Controls(this.render.bind(this), this.camera);
+  new Controls(this.render.bind(this), this.camera, this);
 };
 Scene.prototype.render = function(action) {
   action = typeof action == 'function' ? action : function(){};
@@ -36,6 +38,10 @@ Scene.prototype.makeRoom = function(x, y, z) {
       return x - (room[i]/2); 
     });
   };
+  this.renderMap = function(i, j) {
+    this.map.width = this.map.width;
+    this.map.getContext('2d').fillRect(i/x * 100 + 2, 102 - (j/y * 100), 2, 2);
+  };
   pads.map(function(pad) {
     pad.addTo(this.scene);
   }.bind(this));
@@ -44,7 +50,6 @@ Scene.prototype.addRectangle = function(position, size) {
   (new Rectangle(this.fitToRoom(position), size)).addTo(this.scene);
 };
 Scene.prototype.addCylinder = function(position, size, cylTraits) {
-  console.log(cylTraits);
   (new Cylinder(this.fitToRoom(position), size, cylTraits)).addTo(this.scene);
 };
 Scene.prototype.add = function(elm) {

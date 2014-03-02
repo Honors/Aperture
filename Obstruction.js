@@ -1,5 +1,4 @@
 function construct(constructor, args) {
-  console.log(args);
   return new (constructor.bind.apply(constructor, [null].concat(args)));
 }
 var Obstruction = function(Geometry, position, options) { 
