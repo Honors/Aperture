@@ -25,13 +25,13 @@ Scene.prototype.makeRoom = function(x, y, z) {
   var room = [x, y, z];
   var hX = x/2, hY = y/2, hZ = z/2;
   var pads = [
-    new Rectangle([0, 0, -hZ], [x, y, 1]),
-    new Rectangle([0, 0, hZ], [x, y, 1]),
-    new Rectangle([-hX, 0, 0], [1, y, z]),
-    new Rectangle([hX, 0, 0], [1, y, z]),
-    new Rectangle([0, -hY, 0], [x, 1, z]),
-    new Rectangle([0, hY, 0], [x, 1, z]),
-    new Rectangle([0, 0, 0], [44, 45, 15])
+    new Rectangle([0, 0, -hZ], [x, y, 1], true),
+    new Rectangle([0, 0, hZ], [x, y, 1], true),
+    new Rectangle([-hX, 0, 0], [1, y, z], true),
+    new Rectangle([hX, 0, 0], [1, y, z], true),
+    new Rectangle([0, -hY, 0], [x, 1, z], true),
+    new Rectangle([0, hY, 0], [x, 1, z], true),
+    new Rectangle([0, 0, 0], [44, 45, 15], true)
   ];
   this.fitToRoom = function(position) {
     return position.map(function(x, i) {
