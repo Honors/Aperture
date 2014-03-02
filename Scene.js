@@ -40,7 +40,7 @@ Scene.prototype.makeRoom = function(x, y, z) {
   };
   this.renderMap = function(i, j) {
     this.map.width = this.map.width;
-    this.map.getContext('2d').fillRect(i/x * 100 + 2, 102 - (j/y * 100), 2, 2);
+    this.map.getContext('2d').fillRect(i/x * 100 + 4, 104 - (j/y * 100), 4, 4);
   };
   pads.map(function(pad) {
     pad.addTo(this.scene);
