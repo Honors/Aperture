@@ -16,10 +16,6 @@ obstructions.map(function(obstruction) {
       obstruction.cylTraits :
       undefined);
 });
-var origin = scene.fitToRoom([10, 10, 10]);
-scene.camera.position.x = origin[0];
-scene.camera.position.y = origin[1];
-scene.camera.position.z = origin[2];
 var action = function() {
 };
 scene.render(action);
