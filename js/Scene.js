@@ -32,7 +32,14 @@ Scene.prototype.makeRoom = function(x, y, z) {
       return x - (room[i]/2); 
     });
   };
+  this.extractFromRoom = function(position) {
+    return position.map(function(x, i) {
+      return x + (room[i]/2);
+    });
+  };
   this.renderMap = function(i, j) {
+    var ij = this.extractFromRoom([i, j]),
+        i = ij[0], j = ij[1];
     this.map.width = this.map.width;
     this.map.getContext('2d').fillRect(i/x * 100 + 4, 104 - (j/y * 100), 4, 4);
   };

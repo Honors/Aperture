@@ -1,7 +1,7 @@
 var Controls = function(render, camera, scene) {
   this.angleLR = Math.PI/2;
   this.angleUD = 0;
-  this.position = {x: 0, y: 0, z: 0};
+  this.position = {x: 0, y: -50, z: 0};
   this.camera = camera;
   this.scene = scene;
   document.addEventListener('keydown', function(evt) {
@@ -25,7 +25,7 @@ Controls.prototype.render = function() {
     new THREE.Vector3(Math.cos(this.angleLR) * 200, 
       Math.sin(this.angleLR) * 200, 
       Math.tan(this.angleUD) * 200));
-  (this.scene.renderMap || function(){})(this.position.x, this.position.y);
+  (this.scene.renderMap || function(){}).bind(this.scene)(this.position.x, this.position.y);
   requestAnimationFrame(this.render.bind(this));
 };
 

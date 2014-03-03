@@ -8,7 +8,7 @@ var Obstruction = function(Geometry, position, options, gray) {
   var geometry = construct(Geometry, options.concat([precision, precision]));
   var material = new THREE.MeshBasicMaterial({ wireframe: true, color: Math.random()*0x1000000 });
   var frame = new THREE.Mesh(geometry, material);
-  material = new THREE.MeshBasicMaterial({ wireframe: false, color: gray ? Math.floor(Math.random()*0x50)*0x10101 : Math.random()*0x1000000 });
+  material = new THREE.MeshBasicMaterial({ wireframe: false, color: gray ? Math.floor(Math.random()*0x50+0x50)*0x10101 : Math.random()*0x1000000 });
   var cube = new THREE.Mesh(geometry, material);
   cube.overdraw = true;
   cube.position.x = frame.position.x = x;
