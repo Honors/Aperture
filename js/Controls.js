@@ -4,17 +4,43 @@ var Controls = function(render, camera, scene) {
   this.position = {x: 0, y: -50, z: 0};
   this.camera = camera;
   this.scene = scene;
+  this.rotate = function(right, left, up, down) {
+    this.angleLR += (right ? 1 : (left ? -1 : 0)) * Math.PI/50;
+    this.angleUD += (up ? 1 : (down ? -1 : 0)) * Math.PI/50;
+  };
+  this.move = function(left, right, up, down) {
+      this.position.x += (left ? 1 : (right ? -1 : 0)) * 10;
+      this.position.y += (up ? 1 : (down ? -1 : 0)) * 10;
+  };
   document.addEventListener('keydown', function(evt) {
     if( [65, 68, 87, 83].indexOf(evt.keyCode) != -1) {
       evt.preventDefault();
-      this.angleLR += (evt.keyCode == 65 ? 1 : (evt.keyCode == 68 ? -1 : 0)) * Math.PI/50;
-      this.angleUD += (evt.keyCode == 87 ? 1 : (evt.keyCode == 83 ? -1 : 0)) * Math.PI/50;
+      this.rotate(
+        evt.keyCode == 65, evt.keyCode == 68,
+        evt.keyCode == 87, evt.keyCode == 83);
       render();
     } else if( [37, 38, 39, 40].indexOf(evt.keyCode) != -1 ) {
       evt.preventDefault();
-      this.position.x += (evt.keyCode == 39 ? 1 : (evt.keyCode == 37 ? -1 : 0)) * 10;
-      this.position.y += (evt.keyCode == 38 ? 1 : (evt.keyCode == 40 ? -1 : 0)) * 10;
+      this.move(
+        evt.keyCode == 39, evt.keyCode == 37,
+        evt.keyCode == 38, evt.keyCode == 40);
     }
+  }.bind(this));
+  var start;
+  document.addEventListener('mousedown', function(evt) {
+    start = [evt.x, evt.y];
+  });
+  document.addEventListener('mouseup', function(evt) {
+    start = undefined;
+  });
+  document.addEventListener('mousemove', function(evt) {
+    if( !start ) return;
+    var end = [evt.x, evt.y],
+	delta = end.map(function(x, i) { return x - start[i]; }),
+	x = delta[0], y = delta[1];
+    start = end;
+    this.angleLR += x/10 * Math.PI/50;
+    this.angleUD += y/10 * Math.PI/50;
   }.bind(this));
   this.render();
 };
