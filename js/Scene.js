@@ -14,11 +14,8 @@ Scene.prototype.init = function() {
   this.renderer = renderer;
   new Controls(this.render.bind(this), this.camera, this);
 };
-Scene.prototype.render = function(action) {
-  action = typeof action == 'function' ? action : function(){};
-  var render = arguments.callee.bind(this, action);
-  requestAnimationFrame(render);
-  action.call(this);
+Scene.prototype.render = function() {
+  requestAnimationFrame(arguments.callee.bind(this));
   this.renderer.render(this.scene, this.camera);
 };
 Scene.prototype.makeRoom = function(x, y, z) {
@@ -52,6 +49,9 @@ Scene.prototype.addRectangle = function(position, size) {
 };
 Scene.prototype.addCylinder = function(position, size, cylTraits) {
   (new Cylinder(this.fitToRoom(position), size, cylTraits)).addTo(this.scene);
+};
+Scene.prototype.addCloud = function(position, size) {
+  (new Cloud(this.fitToRoom(position), size)).addTo(this.scene);
 };
 Scene.prototype.add = function(elm) {
   this.scene.add(elm);

@@ -3,16 +3,21 @@ function construct(constructor, args) {
 }
 var Obstruction = function(Geometry, position, options, gray) { 
   var x = position.x, y = position.y, z = position.z;
-  var isCylinder = Geometry == THREE.CylinderGeometry;
-  var precision = isCylinder ? 50 : 1;
+  var isRectangle = Geometry == THREE.CubeGeometry;
+  var precision = isRectangle ? 1 : 50;
   var geometry = construct(Geometry, options.concat([precision, precision]));
-  var material = new THREE.MeshBasicMaterial({ wireframe: true, color: Math.random()*0x1000000 });
+  var material = new THREE.MeshBasicMaterial({
+    wireframe: true,
+    color: Math.random()*0x1000000
+  });
   var frame = new THREE.Mesh(geometry, material);
   material = new THREE.MeshBasicMaterial({
     wireframe: false,
     color: gray ? 
-      0x000000 :
-      Math.floor(Math.random()*0x50+0x50)*0x10101
+      0x444444 :
+      (Geometry == THREE.SphereGeometry ?
+       0xbada55 :
+       Math.floor(Math.random()*0x40+0x60)*0x10101)
   });
   var cube = new THREE.Mesh(geometry, material);
   cube.overdraw = true;
@@ -22,8 +27,7 @@ var Obstruction = function(Geometry, position, options, gray) {
   this.shape = cube;
   this.frame = frame;
 };
-var Rectangle = function(position, size, gray) {
-  this.gray = gray;
+var ShapeData = function(position, size) {
   this.posCoords = position;
   this.sizeCoords = size;
   this.position = {};
@@ -34,6 +38,10 @@ var Rectangle = function(position, size, gray) {
   this.size.x = size[0];
   this.size.y = size[1];
   this.size.z = size[2];
+};
+var Rectangle = function(position, size, gray) {
+  this.gray = gray;
+  ShapeData.call(this, position, size);
 };
 Rectangle.prototype.addTo = function(scene) {
   var cube = new Obstruction(THREE.CubeGeometry,
@@ -43,17 +51,8 @@ Rectangle.prototype.addTo = function(scene) {
   scene.add(cube.shape);
 };
 var Cylinder = function(position, size, traits) {
-  this.posCoords = position;
-  this.sizeCoords = size;
-  this.cylTraits = traits;
-  this.position = {};
-  this.position.x = position[0];
-  this.position.y = position[1];
-  this.position.z = position[2];
-  this.size = {};
-  this.size.x = size[0];
-  this.size.y = size[1];
-  this.size.z = size[2];
+  ShapeData.call(this, position, size);
+  this.traitsCoords = traits;
   this.traits = {};
   this.traits.rotation = traits[0];
   this.traits.incline = traits[1];
@@ -63,6 +62,15 @@ Cylinder.prototype.addTo = function(scene) {
   var cube = new Obstruction(THREE.CylinderGeometry,
     this.position,
     [this.traits.radius, this.traits.radius, this.size.x]);
+  scene.add(cube.shape);
+};
+var Cloud = function(position, size) {
+  ShapeData.call(this, position, size);
+};
+Cloud.prototype.addTo = function(scene) {
+  var cube = new Obstruction(THREE.SphereGeometry,
+    this.position,
+    [this.size.x]);
   scene.add(cube.shape);
 };
 

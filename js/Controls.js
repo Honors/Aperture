@@ -39,8 +39,8 @@ var Controls = function(render, camera, scene) {
 	delta = end.map(function(x, i) { return x - start[i]; }),
 	x = delta[0], y = delta[1];
     start = end;
-    this.angleLR += x/10 * Math.PI/50;
-    this.angleUD += y/10 * Math.PI/50;
+    this.angleLR += -1 * x/10 * Math.PI/50;
+    this.angleUD += -1 * y/10 * Math.PI/50;
   }.bind(this));
   this.render();
 };
