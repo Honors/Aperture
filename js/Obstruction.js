@@ -4,6 +4,7 @@ function construct(constructor, args) {
 var Obstruction = function(Geometry, position, options, gray) { 
   var x = position.x, y = position.y, z = position.z;
   var isRectangle = Geometry == THREE.CubeGeometry;
+  var isSphere = Geometry == THREE.SphereGeometry;
   var precision = isRectangle ? 1 : 50;
   var geometry = construct(Geometry, options.concat([precision, precision]));
   var material = new THREE.MeshBasicMaterial({
@@ -13,9 +14,11 @@ var Obstruction = function(Geometry, position, options, gray) {
   var frame = new THREE.Mesh(geometry, material);
   material = new THREE.MeshBasicMaterial({
     wireframe: false,
+    transparent: isSphere,
+    opacity: isSphere ? 0.7 : 1,
     color: gray ? 
       0x444444 :
-      (Geometry == THREE.SphereGeometry ?
+      (isSphere ?
        0xbada55 :
        Math.floor(Math.random()*0x40+0x60)*0x10101)
   });

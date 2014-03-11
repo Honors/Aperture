@@ -4,13 +4,33 @@
     <title>Aperture</title>
     <script src="js/three.js"></script>
     <style>
-      body { margin: 0; padding: 0; }
-      .three-js { width: 100%; height: 100%; z-index: 1; }
-      #map { position: absolute; z-index: 10; bottom: 10px; left: 10px; width: 100px; height: 100px; background: #333; }
+      body {
+        margin: 0;
+	padding: 0;
+	width: 902px;
+	margin: auto;
+      }
+      .three-js {
+        width: 800px;
+	height: 500px;
+	float: left;
+	outline: 1px solid #333;
+      }
+      #tools {
+	float: left;
+	width: 100px;
+      }
+      #map {
+	width: 100px;
+	height: 100px;
+	background: #eee;
+      }
     </style>
   </head>
   <body>
-    <canvas id="map" width="104" height="104"></canvas>
+    <div id="tools">
+      <canvas id="map" width="104" height="104"></canvas>
+    </div>
     <script src="js/util.js"></script>
     <script src="js/Controls.js"></script>
     <script src="js/Scene.js"></script>
