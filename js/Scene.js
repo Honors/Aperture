@@ -38,7 +38,10 @@ Scene.prototype.makeRoom = function(x, y, z) {
     var ij = this.extractFromRoom([i, j]),
         i = ij[0], j = ij[1];
     this.map.width = this.map.width;
-    this.map.getContext('2d').fillRect(i/x * 100 + 4, 104 - (j/y * 100), 4, 4);
+    var ctx = this.map.getContext('2d');
+    ctx.rect(20, 20, 58, 58);
+    ctx.stroke();
+    ctx.fillRect(i/x * 58 + 20, 100 - ((j/y * 58) + 20), 4, 4);
   };
   pads.map(function(pad) {
     pad.addTo(this.scene);
