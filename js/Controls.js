@@ -1,3 +1,4 @@
+var mode = { rotate: false };
 var Controls = function(render, camera, scene) {
   this.angleLR = Math.PI/2;
   this.angleUD = 0;
@@ -39,8 +40,19 @@ var Controls = function(render, camera, scene) {
 	delta = end.map(function(x, i) { return x - start[i]; }),
 	x = delta[0], y = delta[1];
     start = end;
-    this.angleLR += -1 * x/10 * Math.PI/50;
-    this.angleUD += -1 * y/10 * Math.PI/50;
+    if( mode.rotate ) {
+      this.angleLR += -1 * x/10 * Math.PI/50;
+      this.angleUD += -1 * y/10 * Math.PI/50;
+    } else {
+      var arrow = [Math.cos(this.angleLR),
+        Math.sin(this.angleLR),
+	Math.tan(this.angleUD)];
+      var normal = [1, 1,
+        (arrow[0] + arrow[1])/(-arrow[2])];
+      this.position.x += -1 * x / normal[0];
+      this.position.z += -1 * y / normal[1];
+      this.position.y += -1 * y / normal[2];
+    }
   }.bind(this));
   this.render();
 };
