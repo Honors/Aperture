@@ -54,6 +54,20 @@ var Controls = function(render, camera, scene) {
       this.position.y += -1 * y / normal[2];
     }
   }.bind(this));
+  [].map.call(
+    document.querySelectorAll("#modes li a"), 
+    function(elm, i, coll) {
+      elm.addEventListener('click', function(evt) {
+	evt.preventDefault();
+	mode.rotate = elm.id == "rotate_mode";
+	mode.pan = elm.id == "pan_mode";
+	mode.zoom = elm.id == "zoom_mode";
+	[].map.call(
+	  coll, 
+	  function(elm) { elm.className = ''; });
+	elm.className = 'active';
+      });
+  });
   this.render();
 };
 Controls.prototype.render = function() {

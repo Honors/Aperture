@@ -25,11 +25,24 @@
 	height: 100px;
 	background: #eee;
       }
+      #tools ul {
+        margin: 0;
+	padding: 0;
+	list-style: none;
+      }
+      #modes .active {
+        color: red;
+      }
     </style>
   </head>
   <body>
     <div id="tools">
       <canvas id="map" width="100" height="100"></canvas>
+      <ul id="modes">
+	<li><a href="#" id="rotate_mode">Rotate</a></li>
+	<li><a href="#" id="pan_mode">Pan</a></li>
+	<li><a href="#" id="zoom_mode">Zoom</a></li>
+      </ul>
     </div>
     <script src="js/util.js"></script>
     <script src="js/Controls.js"></script>
