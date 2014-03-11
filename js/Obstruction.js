@@ -76,12 +76,12 @@ Cloud.prototype.addTo = function(scene) {
     [this.size.x]);
   scene.add(cube.shape);
 };
-var NURBS = function(position, fun) {
+var Surface = function(position, fun) {
   ShapeData.call(this, position, []);
   this.fun = fun;
   this.traitsCoords = [fun];
 };
-NURBS.prototype.addTo = function(scene) {
+Surface.prototype.addTo = function(scene) {
   var cube = new Obstruction(THREE.ParametricGeometry,
     this.position,
     [this.fun]);

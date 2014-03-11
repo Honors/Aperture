@@ -56,8 +56,8 @@ Scene.prototype.addCylinder = function(position, size, cylTraits) {
 Scene.prototype.addCloud = function(position, size) {
   (new Cloud(this.fitToRoom(position), size)).addTo(this.scene);
 };
-Scene.prototype.addNURBS = function(position, size, traits) {
-  (new NURBS(this.fitToRoom(position), traits[0])).addTo(this.scene);
+Scene.prototype.addSurface = function(position, size, traits) {
+  (new Surface(this.fitToRoom(position), traits[0])).addTo(this.scene);
 };
 Scene.prototype.add = function(elm) {
   this.scene.add(elm);
