@@ -1,4 +1,4 @@
-var mode = { rotate: false };
+var mode = { rotate: true };
 var Controls = function(render, camera, scene) {
   this.angleLR = Math.PI/2;
   this.angleUD = 0;

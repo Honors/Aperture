@@ -1,3 +1,6 @@
+var cos = Math.cos.bind(Math);
+var sin = Math.sin.bind(Math);
+var tan = Math.tan.bind(Math);
 var normalize = function(vec) {
   return vec.map(divideBy(sqrt(vec.map(square).reduce(sum, 0))));
 };
