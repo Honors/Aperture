@@ -7,13 +7,24 @@ var obstructions = [
   new Cloud([12, 12, 12], [10, 0, 0]),
   new Cylinder([12, 6, 5], [10, 0, 0], [0, 0, 1.75]),
   new Surface([12, 6, 5], function(u,v) {
-    var t = 2 * Math.PI * u,
+    // A surface of revolution from a two-piece function
+    var r = 5,
+        t = 2 * Math.PI * u,
         s = v;
-    var r = 10;
     if( s >= 0.5 ) {
-      return new THREE.Vector3(cos(t) * (1 - s) * r, sin(t) * (1 - s) * r, 0.5 * r + Math.sqrt(s - 0.5));
+      s = 2 * (s - 0.5);
+      // s = 0..1
+      return new THREE.Vector3(
+        cos(t) * (1 - s) * r,
+	sin(t) * (1 - s) * r,
+	r + 2 * Math.sqrt(s));
     } else {
-      return new THREE.Vector3(cos(t) * s * r, sin(t) * s * r, s * r);
+      s = 2 * s;
+      // s = 0..1
+      return new THREE.Vector3(
+        cos(t) * s * r,
+	sin(t) * s * r,
+	s * r);
     }
   })
 ];
