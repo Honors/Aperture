@@ -10,7 +10,9 @@ Scene.prototype.init = function() {
   var renderer = new THREE.WebGLRenderer({ alpha: true });
   renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.domElement.className += "three-js";
-  document.body.appendChild(renderer.domElement);
+  document.body.insertBefore(
+    renderer.domElement,
+    document.body.firstChild);
   this.renderer = renderer;
   new Controls(this.render.bind(this), this.camera, this);
 };
