@@ -5,7 +5,8 @@ var Obstruction = function(Geometry, position, options, gray) {
   var x = position.x, y = position.y, z = position.z;
   var isRectangle = Geometry == THREE.CubeGeometry;
   var isSphere = Geometry == THREE.SphereGeometry;
-  var precision = isRectangle ? 1 : 50;
+  var isSurface = Geometry == THREE.ParametricGeometry;
+  var precision = isRectangle ? 1 : (isSurface ? 50 : 50);
   var geometry = construct(Geometry, options.concat([precision, precision]));
   var material = new THREE.MeshBasicMaterial({
     wireframe: true,

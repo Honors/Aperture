@@ -4,19 +4,18 @@ var obstructions = [
   new Rectangle([36.125, 38.25, 2], [5.25, 1.5, 4]),
   new Rectangle([36.25, 5.875, 1.75], [6.5, 1.75, 3.5]),
   new Cylinder([15.25, 37.5, 7], [15.5, 0, 0], [0, 0, 2.5]),
+  new Cloud([12, 12, 12], [10, 0, 0]),
   new Cylinder([12, 6, 5], [10, 0, 0], [0, 0, 1.75]),
   new Surface([12, 6, 5], function(u,v) {
-    // TODO: convert from sphere to realistic surface
-    var theta = 360 * u/50, 
-        phi = 360 * v/50;
-    var R = 4,
-        r = R * cos(phi);
-    return new THREE.Vector3(
-      sqrt(R*R - r*r) * cos(theta),
-      sqrt(R*R - r*r) * sin(theta),
-      r);
-  }),
-  new Cloud([12, 12, 12], [10, 0, 0])
+    var t = 2 * Math.PI * u,
+        s = v;
+    var r = 10;
+    if( s >= 0.5 ) {
+      return new THREE.Vector3(cos(t) * (1 - s) * r, sin(t) * (1 - s) * r, 0.5 * r);
+    } else {
+      return new THREE.Vector3(cos(t) * s * r, sin(t) * s * r, s * r);
+    }
+  })
 ];
 obstructions.map(function(obstruction) {
   match(
