@@ -11,7 +11,7 @@ var obstructions = [
         s = v;
     var r = 10;
     if( s >= 0.5 ) {
-      return new THREE.Vector3(cos(t) * (1 - s) * r, sin(t) * (1 - s) * r, 0.5 * r);
+      return new THREE.Vector3(cos(t) * (1 - s) * r, sin(t) * (1 - s) * r, 0.5 * r + Math.sqrt(s - 0.5));
     } else {
       return new THREE.Vector3(cos(t) * s * r, sin(t) * s * r, s * r);
     }
