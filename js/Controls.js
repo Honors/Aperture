@@ -10,8 +10,19 @@ var Controls = function(render, camera, scene) {
     this.angleUD += (up ? 1 : (down ? -1 : 0)) * Math.PI/50;
   };
   this.move = function(left, right, up, down) {
-      this.position.x += (left ? 1 : (right ? -1 : 0)) * 10;
-      this.position.y += (up ? 1 : (down ? -1 : 0)) * 10;
+    this.position.x += (left ? 1 : (right ? -1 : 0)) * 10;
+    this.position.y += (up ? 1 : (down ? -1 : 0)) * 10;
+  };
+  this.face = function(key) {
+    var angle = [
+      [0, 1],
+      [1, 0],
+      [0, -1],
+      [-1, 0],
+      [1, 1],
+      [-1, -1]][key - 1];
+    this.angleLR = angle[0] * Math.PI;
+    this.angleUD = angle[1] * Math.PI;
   };
   document.addEventListener('keydown', function(evt) {
     if( [65, 68, 87, 83].indexOf(evt.keyCode) != -1) {
@@ -25,6 +36,8 @@ var Controls = function(render, camera, scene) {
       this.move(
         evt.keyCode == 39, evt.keyCode == 37,
         evt.keyCode == 38, evt.keyCode == 40);
+    } else if( [49, 50, 51, 52, 53, 54].indexOf(evt.keyCode) != -1 ) {
+      this.face(evt.keyCode - 48);
     }
   }.bind(this));
   var start;
@@ -43,6 +56,16 @@ var Controls = function(render, camera, scene) {
     if( mode.rotate ) {
       this.angleLR += -1 * x/10 * Math.PI/50;
       this.angleUD += -1 * y/10 * Math.PI/50;
+    } else if( mode.zoom ) {
+      var mag = Math.sqrt(x*x + y*y) * y/Math.abs(y);
+      var arrow = [Math.cos(this.angleLR),
+        Math.sin(this.angleLR),
+	Math.tan(this.angleUD)];
+      var normal = [1, 1,
+        (arrow[0] + arrow[1])/(-arrow[2])];
+      if( !isNaN(mag) ) {
+	this.position.y += -1 * mag/20;
+      }
     } else {
       var arrow = [Math.cos(this.angleLR),
         Math.sin(this.angleLR),
