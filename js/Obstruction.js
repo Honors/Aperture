@@ -33,23 +33,17 @@ var Obstruction = function(Geometry, options) {
   cube.position.x = frame.position.x = x;
   cube.position.z = frame.position.z = z;
   cube.position.y = frame.position.y = y;
-  cube.rotation.x = frame.rotation.x = rotation || 0;
+  cube.rotation.y = frame.rotation.y = rotation || 0;
   cube.rotation.z = frame.rotation.z = incline || 0;
   cube.rotation.y = frame.rotation.y = 0;
   this.shape = cube;
   this.frame = frame;
 };
 var ShapeData = function(position, size) {
-  this.posCoords = position;
-  this.sizeCoords = size;
-  this.position = {};
-  this.position.x = position[0];
-  this.position.y = position[1];
-  this.position.z = position[2];
-  this.size = {};
-  this.size.x = size[0];
-  this.size.y = size[1];
-  this.size.z = size[2];
+  this.posCoords = [position.x, position.y, position.z];
+  this.sizeCoords = [size.x, size.y, size.z];
+  this.position = position;
+  this.size = size;
 };
 var Rectangle = function(position, size, gray) {
   this.gray = gray;

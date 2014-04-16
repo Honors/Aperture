@@ -21,20 +21,28 @@ Scene.prototype.render = function() {
   this.renderer.render(this.scene, this.camera);
 };
 Scene.prototype.makeRoom = function(x, y, z) {
-  var room = [x, y, z];
+  var room = {x:x, y:y, z:z};
   var hX = x/2, hY = y/2, hZ = z/2;
   var pads = [
-    new Rectangle([0, 0, -hZ], [x, y, 1], true)
+    new Rectangle({
+      x: 0, y: 0, z: -hZ
+    }, {
+      x: x, y: y, z: 1
+    }, true)
   ];
   this.fitToRoom = function(position) {
-    return position.map(function(x, i) {
-      return x - (room[i]/2); 
-    });
+    return {
+      x: position.x - room.x/2,
+      y: position.y - room.y/2,
+      z: position.z - room.z/2,
+    };
   };
   this.extractFromRoom = function(position) {
-    return position.map(function(x, i) {
-      return x + (room[i]/2);
-    });
+    return {
+      x: position.x + room.x/2,
+      y: position.y + room.y/2,
+      z: position.z + room.z/2,
+    };
   };
   this.renderMap = function(i, j) {
     var ij = this.extractFromRoom([i, j]),
