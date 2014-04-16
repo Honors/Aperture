@@ -47,34 +47,34 @@ var Controls = function(render, camera, scene) {
   document.addEventListener('mouseup', function(evt) {
     start = undefined;
   });
+  var zoom = function(delta) {
+    this.position.x += delta * Math.cos(this.angleLR);
+    this.position.y += delta * Math.sin(this.angleLR);
+    this.position.z += delta * Math.tan(this.angleUD);
+  };
+  document.addEventListener('mousewheel', function(evt) {
+    evt.preventDefault();
+    zoom.call(this, evt.wheelDelta/5);
+  }.bind(this));
   document.addEventListener('mousemove', function(evt) {
     if( !start ) return;
     var end = [evt.x, evt.y],
 	delta = end.map(function(x, i) { return x - start[i]; }),
 	x = delta[0], y = delta[1];
+    var xTheta = this.angleLR - Math.PI/2,
+	yTheta = this.angleUD - Math.PI/2,
+	xv = [Math.cos(xTheta) * x, Math.sin(xTheta) * x, 0],
+	yv = [0, Math.cos(yTheta) * y, Math.sin(yTheta) * y];
     start = end;
     if( mode.rotate ) {
-      this.angleLR += -1 * x/10 * Math.PI/50;
-      this.angleUD += -1 * y/10 * Math.PI/50;
+      this.angleLR += x/10 * Math.PI/50;
+      this.angleUD += y/10 * Math.PI/50;
     } else if( mode.zoom ) {
-      var mag = Math.sqrt(x*x + y*y) * y/Math.abs(y);
-      var arrow = [Math.cos(this.angleLR),
-        Math.sin(this.angleLR),
-	Math.tan(this.angleUD)];
-      var normal = [1, 1,
-        (arrow[0] + arrow[1])/(-arrow[2])];
-      if( !isNaN(mag) ) {
-	this.position.y += -1 * mag/20;
-      }
+      zoom.call(this, y);
     } else {
-      var arrow = [Math.cos(this.angleLR),
-        Math.sin(this.angleLR),
-	Math.tan(this.angleUD)];
-      var normal = [1, 1,
-        (arrow[0] + arrow[1])/(-arrow[2])];
-      this.position.x += -1 * x / normal[0];
-      this.position.z += -1 * y / normal[1];
-      this.position.y += -1 * y / normal[2];
+      this.position.x -= (xv[0]+yv[0])/10;
+      this.position.y -= (xv[1]+yv[1])/10;
+      this.position.z -= (xv[2]+yv[2])/10;
     }
   }.bind(this));
   [].map.call(
