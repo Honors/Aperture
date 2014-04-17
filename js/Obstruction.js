@@ -33,8 +33,9 @@ var Obstruction = function(Geometry, options) {
   cube.position.x = frame.position.x = x;
   cube.position.z = frame.position.z = z;
   cube.position.y = frame.position.y = y;
-  cube.rotation.x = frame.rotation.x = rotation || 0;
-  cube.rotation.z = frame.rotation.z = incline || 0;
+  cube.rotation.x = frame.rotation.x = (rotation || 0) * Math.PI/180;
+  cube.rotation.z = frame.rotation.z = (incline || 0) * Math.PI/180;
+  console.log(cube.rotation);
   cube.rotation.y = frame.rotation.y = 0;
   this.shape = cube;
   this.frame = frame;
@@ -95,5 +96,30 @@ Surface.prototype.addTo = function(scene) {
     parameters: [this.fun]
   });
   scene.add(cube.shape);
+};
+var FireDetector = function(pos) {
+  return new Surface(
+    pos,
+    function(u, v) {
+      // A surface of revolution from a two-piece function
+      var r = 5,
+	  t = 2 * Math.PI * u,
+	  s = v;
+      if( s >= 0.5 ) {
+	s = 2 * (s - 0.5);
+	// s = 0..1
+	return new THREE.Vector3(
+	  cos(t) * (1 - s) * r,
+	  sin(t) * (1 - s) * r,
+	  r + 2 * Math.sqrt(s));
+      } else {
+	s = 2 * s;
+	// s = 0..1
+	return new THREE.Vector3(
+	  cos(t) * s * r,
+	  sin(t) * s * r,
+	  s * r);
+      }
+    });
 };
 
