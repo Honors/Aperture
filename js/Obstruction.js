@@ -33,7 +33,7 @@ var Obstruction = function(Geometry, options) {
   cube.position.x = frame.position.x = x;
   cube.position.z = frame.position.z = z;
   cube.position.y = frame.position.y = y;
-  cube.rotation.y = frame.rotation.y = rotation || 0;
+  cube.rotation.x = frame.rotation.x = rotation || 0;
   cube.rotation.z = frame.rotation.z = incline || 0;
   cube.rotation.y = frame.rotation.y = 0;
   this.shape = cube;
@@ -68,7 +68,9 @@ var Cylinder = function(position, size, traits) {
 Cylinder.prototype.addTo = function(scene) {
   var cube = new Obstruction(THREE.CylinderGeometry, {
     position: this.position,
-    parameters: [this.traits.radius, this.traits.radius, this.size.x]
+    parameters: [this.traits.radius, this.traits.radius, this.size.x],
+    incline: this.traits.incline,
+    rotation: this.traits.rotation
   });
   scene.add(cube.shape);
 };

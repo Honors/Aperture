@@ -10,14 +10,15 @@ var obstructions = [
   new Cylinder(
     {x: 15.25, y: 37.5, z: 7},
     {x: 15.5, y: 0, z: 0},
-    [0, 0, 2.5]),
-  new Cloud(
-    {x: 12, y: 12, z: 12},
-    {x: 10, y: 0, z: 0}),
+    [0, Math.PI/2, 2.5]),
   new Cylinder(
     {x: 12, y: 6, z: 5},
     {x: 10, y: 0, z: 0},
-    [0, 0, 1.75]),
+    [0, Math.PI/2, 1.75]),
+  /*
+  new Cloud(
+    {x: 12, y: 12, z: 12},
+    {x: 10, y: 0, z: 0}),
   new Surface(
     {x: 12, y: 6, z: 5},
     function(u, v) {
@@ -40,7 +41,7 @@ var obstructions = [
 	  sin(t) * s * r,
 	  s * r);
       }
-    })
+    })*/
 ];
 obstructions.map(function(obstruction) {
   match(

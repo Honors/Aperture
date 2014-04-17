@@ -56,6 +56,19 @@ Scene.prototype.makeRoom = function(x, y, z) {
   pads.map(function(pad) {
     pad.addTo(this.scene);
   }.bind(this));
+
+  var img = new THREE.MeshBasicMaterial({
+    map: THREE.ImageUtils.loadTexture('map.png')
+  });
+  img.map.needsUpdate = true;
+  // plane
+  var map = new THREE.CubeGeometry(x, y, 0.2);
+  var plane = new THREE.Mesh(map, img);
+  plane.position.x = 0;
+  plane.position.y = 0;
+  plane.position.z = 0.7 - hZ;
+  plane.overdraw = true;
+  this.scene.add(plane);
 };
 Scene.prototype.addRectangle = function(position, size) {
   (new Rectangle(this.fitToRoom(position), size)).addTo(this.scene);
