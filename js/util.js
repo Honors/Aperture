@@ -54,4 +54,12 @@ var piecewise = function(fns) {
     return fn.fn((x-fn.range[0])/(fn.range[1]-fn.range[0]));
   };
 };
+var revolvingParametric = function(f) {
+  return function(t, s) {
+    return new THREE.Vector3(
+      cos(t) * f(s).x,
+      sin(t) * f(s).x,
+      f(s).y);
+  };
+};
 

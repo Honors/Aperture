@@ -100,25 +100,21 @@ var FireDetector = function(pos) {
   return new Surface(
     pos,
     function(u, v) {
-      // A surface of revolution from a two-piece function
-      var r = 5,
-	  t = 2 * Math.PI * u,
-	  s = v;
-      if( s >= 0.5 ) {
-	s = 2 * (s - 0.5);
-	// s = 0..1
-	return new THREE.Vector3(
-	  cos(t) * (1 - s) * r,
-	  sin(t) * (1 - s) * r,
-	  r + 2 * Math.sqrt(s));
-      } else {
-	s = 2 * s;
-	// s = 0..1
-	return new THREE.Vector3(
-	  cos(t) * s * r,
-	  sin(t) * s * r,
-	  s * r);
-      }
+      // A piecewise surface of revolution from two parametric functions.
+      var r = 5, t = 2 * Math.PI * u;
+      return piecewise([
+	{
+	  range: [0, 0.5], 
+	  fn: revolvingParametric(function(s) {
+	    return new Vector(s*r, s*r);
+	  }).bind({}, t)
+	}, {
+	  range: [0.5, 1],
+	  fn: revolvingParametric(function(s) {
+	    return new Vector((1-s)*r, r+Math.sqrt(s*r));
+	  }).bind({}, t)
+	}
+      ])(v);
     });
 };
 
