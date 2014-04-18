@@ -5,7 +5,6 @@ var parseObstruction = function(line) {
       pos = cols.slice(1, 4).map(function(x) { return parseFloat(x); }),
       size = cols.slice(4, 7).map(function(x) { return parseFloat(x); }),
       traits = cols.slice(7, 10).map(function(x) { return parseFloat(x); });
-  console.log(pos, size, traits);
   return new ({
     "6a32ada42": FireDetector,
     "Rectangle": Rectangle,
