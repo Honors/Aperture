@@ -36,14 +36,14 @@ Vector.prototype = {
     return new Vector(x*this.x, x*this.y);
   }
 };
+var _2 = function(x) { return x*x; },
+    _3 = function(x) { return _2(x)*x; };
 var bezier = function(p0, p1, p2, p3) {
   p0 = new Vector(p0[0], p0[1]);
   p1 = new Vector(p1[0], p1[1]);
   p2 = new Vector(p2[0], p2[1]);
   p3 = new Vector(p3[0], p3[1]);
   return function(t) {
-    var _2 = function(x) { return x*x; },
-	_3 = function(x) { return _2(x)*x; };
     return p0.mult(_3(1-t)).add(
            p1.mult(_2(1-t)*t*3)).add(
 	   p2.mult((1-t)*_2(t)*3)).add(

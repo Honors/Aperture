@@ -2,7 +2,7 @@ var mode = { rotate: true };
 var Controls = function(render, camera, scene) {
   this.angleLR = Math.PI/2;
   this.angleUD = 0;
-  this.position = {x: 0, y: -50, z: 0};
+  this.position = {x: 0, y: -60, z: 0};
   this.camera = camera;
   this.scene = scene;
   this.rotate = function(right, left, up, down) {
@@ -67,8 +67,19 @@ var Controls = function(render, camera, scene) {
 	yv = [0, Math.cos(yTheta) * y, Math.sin(yTheta) * y];
     start = end;
     if( mode.rotate ) {
-      this.angleLR += x/10 * Math.PI/50;
-      this.angleUD += y/10 * Math.PI/50;
+      var hyp = Math.sqrt(_2(this.position.x) + _2(this.position.y)),
+          hypZ = Math.sqrt(_2(hyp) + _2(this.position.z)),
+          dLR = -x/10 * Math.PI/50,
+          dUD = -y/10 * Math.PI/50;
+      var prospect = this.angleUD + dUD;
+      if( prospect < 0 && prospect > -Math.PI/2 ) {
+	this.angleLR += dLR;
+	this.angleUD += dUD;
+	this.position.z = Math.sin(Math.PI+this.angleUD)*hypZ;
+	var newHyp = Math.cos(this.angleUD)*hypZ;
+	this.position.x = Math.cos(Math.PI+this.angleLR)*newHyp;
+	this.position.y = Math.sin(Math.PI+this.angleLR)*newHyp;
+      }
     } else if( mode.zoom ) {
       zoom.call(this, y);
     } else {
