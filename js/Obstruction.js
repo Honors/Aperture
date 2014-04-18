@@ -111,18 +111,18 @@ var FireDetector = function(pos, size, traits) {
     traits,
     function(u, v) {
       // A piecewise surface of revolution from two parametric functions.
-      var r = 5, t = 2 * Math.PI * u;
+      var r = 5, t = 2 * Math.PI * u, h = 10;
       return piecewise([
 	{
 	  range: [0, 0.5], 
-	  fn: revolvingParametric(vectorLine(0, 0, 6.5, -6.5)).bind({}, t)
+	  fn: revolvingParametric(vectorLine(0, 0, 105/210*h, -105/210*h)).bind({}, t)
 	},
 	{
 	  range: [0.5, 1], 
-	  fn: revolvingParametric(bezier([6.5, -6.5],
-	    [11, -9.5],
-	    [6, -13],
-	    [0, -12.8])).bind({}, t)
+	  fn: revolvingParametric(bezier([105/210*h, -105/210*h],
+	    [178/210*h, -153/210*h],
+	    [97/210*h, -210/210*h],
+	    [0/210*h, -207/210*h])).bind({}, t)
 	}
       ])(v);
     });
