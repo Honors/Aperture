@@ -3,6 +3,7 @@ var Controls = function(render, camera, scene) {
   this.angleLR = Math.PI/2;
   this.angleUD = 0;
   this.position = {x: 0, y: -60, z: 0};
+  this.hypZ = Math.sqrt(_2(this.position.x) + _2(this.position.y) + _2(this.position.z));
   this.camera = camera;
   this.scene = scene;
   this.rotate = function(right, left, up, down) {
@@ -15,14 +16,14 @@ var Controls = function(render, camera, scene) {
   };
   this.face = function(key) {
     var angle = [
-      [0, 1],
+      [0, 0],
       [1, 0],
-      [0, -1],
-      [-1, 0],
-      [1, 1],
-      [-1, -1]][key - 1];
-    this.angleLR = angle[0] * Math.PI;
-    this.angleUD = angle[1] * Math.PI;
+      [2, 0],
+      [3, 0],
+      [0, -0.99]][key - 1];
+    var angleLR = angle[0] * Math.PI/2,
+	angleUD = angle[1] * Math.PI/2;
+    this.takeAngles(angleLR, angleUD);
   };
   document.addEventListener('keydown', function(evt) {
     if( [65, 68, 87, 83].indexOf(evt.keyCode) != -1) {
@@ -36,7 +37,7 @@ var Controls = function(render, camera, scene) {
       this.move(
         evt.keyCode == 39, evt.keyCode == 37,
         evt.keyCode == 38, evt.keyCode == 40);
-    } else if( [49, 50, 51, 52, 53, 54].indexOf(evt.keyCode) != -1 ) {
+    } else if( [49, 50, 51, 52, 53].indexOf(evt.keyCode) != -1 ) {
       this.face(evt.keyCode - 48);
     }
   }.bind(this));
@@ -47,15 +48,25 @@ var Controls = function(render, camera, scene) {
   document.addEventListener('mouseup', function(evt) {
     start = undefined;
   });
-  var zoom = function(delta) {
+  this.zoom = function(delta) {
     this.position.x += delta * Math.cos(this.angleLR);
     this.position.y += delta * Math.sin(this.angleLR);
     this.position.z += delta * Math.tan(this.angleUD);
   };
   document.addEventListener('mousewheel', function(evt) {
     evt.preventDefault();
-    zoom.call(this, evt.wheelDelta/5);
+    this.zoom(evt.wheelDelta/5);
   }.bind(this));
+  this.takeAngles = function(LR, UD) {
+    if( UD <= 0 && UD >= -Math.PI/2 ) {
+      this.angleLR = LR;
+      this.angleUD = UD;
+      this.position.z = Math.sin(Math.PI+this.angleUD)*this.hypZ;
+      var newHyp = Math.cos(this.angleUD)*this.hypZ;
+      this.position.x = Math.cos(Math.PI+this.angleLR)*newHyp;
+      this.position.y = Math.sin(Math.PI+this.angleLR)*newHyp;
+    }
+  };
   document.addEventListener('mousemove', function(evt) {
     if( !start ) return;
     var end = [evt.x, evt.y],
@@ -67,21 +78,11 @@ var Controls = function(render, camera, scene) {
 	yv = [0, Math.cos(yTheta) * y, Math.sin(yTheta) * y];
     start = end;
     if( mode.rotate ) {
-      var hyp = Math.sqrt(_2(this.position.x) + _2(this.position.y)),
-          hypZ = Math.sqrt(_2(hyp) + _2(this.position.z)),
-          dLR = -x/10 * Math.PI/50,
-          dUD = -y/10 * Math.PI/50;
-      var prospect = this.angleUD + dUD;
-      if( prospect < 0 && prospect > -Math.PI/2 ) {
-	this.angleLR += dLR;
-	this.angleUD += dUD;
-	this.position.z = Math.sin(Math.PI+this.angleUD)*hypZ;
-	var newHyp = Math.cos(this.angleUD)*hypZ;
-	this.position.x = Math.cos(Math.PI+this.angleLR)*newHyp;
-	this.position.y = Math.sin(Math.PI+this.angleLR)*newHyp;
-      }
+      var dLR = -x/10 * Math.PI/50,
+	  dUD = -y/10 * Math.PI/50;
+      this.takeAngles(this.angleLR + dLR, this.angleUD + dUD);
     } else if( mode.zoom ) {
-      zoom.call(this, y);
+      this.zoom(y);
     } else {
       this.position.x -= (xv[0]+yv[0])/10;
       this.position.y -= (xv[1]+yv[1])/10;
