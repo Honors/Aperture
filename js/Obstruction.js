@@ -105,14 +105,14 @@ var FireDetector = function(pos) {
       return piecewise([
 	{
 	  range: [0, 0.5], 
-	  fn: revolvingParametric(function(s) {
-	    return new Vector(s*r, s*r);
-	  }).bind({}, t)
-	}, {
-	  range: [0.5, 1],
-	  fn: revolvingParametric(function(s) {
-	    return new Vector((1-s)*r, r+Math.sqrt(s*r));
-	  }).bind({}, t)
+	  fn: revolvingParametric(vectorLine(0, 0, 6.5, -6.5)).bind({}, t)
+	},
+	{
+	  range: [0.5, 1], 
+	  fn: revolvingParametric(bezier([6.5, -6.5],
+	    [11, -9.5],
+	    [6, -13],
+	    [0, -12.8])).bind({}, t)
 	}
       ])(v);
     });
