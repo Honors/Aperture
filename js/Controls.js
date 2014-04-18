@@ -3,7 +3,9 @@ var Controls = function(render, camera, scene) {
   this.angleLR = 0;
   this.angleUD = 0;
   this.position = {x: -60, y: 0, z: 0};
-  this.hypZ = Math.sqrt(_2(this.position.x) + _2(this.position.y) + _2(this.position.z));
+  this.hypZ = function() {
+    return Math.sqrt(_2(this.position.x) + _2(this.position.y) + _2(this.position.z));
+  };
   this.camera = camera;
   this.scene = scene;
   this.rotate = function(right, left, up, down) {
@@ -61,8 +63,8 @@ var Controls = function(render, camera, scene) {
     if( UD <= 0 && UD >= -Math.PI/2 ) {
       this.angleLR = LR;
       this.angleUD = UD;
-      this.position.z = Math.sin(Math.PI+this.angleUD)*this.hypZ;
-      var newHyp = Math.cos(this.angleUD)*this.hypZ;
+      this.position.z = Math.sin(Math.PI+this.angleUD)*this.hypZ();
+      var newHyp = Math.cos(this.angleUD)*this.hypZ();
       this.position.x = Math.cos(Math.PI+this.angleLR)*newHyp;
       this.position.y = Math.sin(Math.PI+this.angleLR)*newHyp;
     }
