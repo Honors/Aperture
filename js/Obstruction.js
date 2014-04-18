@@ -11,28 +11,32 @@ var Obstruction = function(Geometry, options) {
   var isRectangle = Geometry == THREE.CubeGeometry;
   var isSphere = Geometry == THREE.SphereGeometry;
   var isSurface = Geometry == THREE.ParametricGeometry;
-  var precision = isRectangle ? 1 : (isSurface ? 50 : 50);
+  var precision = isRectangle ? 1 : (isSurface ? 100 : 50);
   var geometry = construct(Geometry, parameters.concat([precision, precision]));
   var material = new THREE.MeshBasicMaterial({
     wireframe: true,
     color: Math.random()*0x1000000
   });
   var frame = new THREE.Mesh(geometry, material);
+  var isSensor = isSphere || isSurface;
   material = new THREE.MeshBasicMaterial({
     wireframe: false,
-    transparent: isSphere,
-    opacity: isSphere ? 0.7 : 1,
+    transparent: isSensor,
+    opacity: isSensor ? 0.7 : 1,
     color: gray ? 
       0x444444 :
       (isSphere ?
        0xbada55 :
-       Math.floor(Math.random()*0x40+0x60)*0x10101)
+       (isSurface ?
+        0xff3336 :
+	Math.floor(Math.random()*0x40+0x60)*0x10101))
   });
   var cube = new THREE.Mesh(geometry, material);
   cube.overdraw = true;
   cube.position.x = frame.position.x = x;
   cube.position.z = frame.position.z = z;
   cube.position.y = frame.position.y = y;
+  if( isSurface ) console.log(rotation, incline);
   cube.rotation.x = frame.rotation.x = (rotation || 0) * Math.PI/180;
   cube.rotation.z = frame.rotation.z = (incline || 0) * Math.PI/180;
   cube.rotation.y = frame.rotation.y = 0;
@@ -84,21 +88,28 @@ Cloud.prototype.addTo = function(scene) {
   });
   scene.add(cube.shape);
 };
-var Surface = function(position, fun) {
+var Surface = function(position, traits, fun) {
   ShapeData.call(this, position, []);
+  this.traitsCoords = traits.concat([fun]);
+  this.traits = {};
+  this.traits.rotation = traits[0];
+  this.traits.incline = traits[1];
+  this.traits.radius = traits[2];
   this.fun = fun;
-  this.traitsCoords = [fun];
 };
 Surface.prototype.addTo = function(scene) {
   var cube = new Obstruction(THREE.ParametricGeometry, {
     position: this.position,
-    parameters: [this.fun]
+    parameters: [this.fun],
+    incline: this.traits.incline,
+    rotation: this.traits.rotation
   });
   scene.add(cube.shape);
 };
-var FireDetector = function(pos) {
+var FireDetector = function(pos, size, traits) {
   return new Surface(
     pos,
+    traits,
     function(u, v) {
       // A piecewise surface of revolution from two parametric functions.
       var r = 5, t = 2 * Math.PI * u;

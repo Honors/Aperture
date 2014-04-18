@@ -34,18 +34,18 @@ Scene.prototype.makeRoom = function(x, y, z) {
     return {
       x: position.x - room.x/2,
       y: position.y - room.y/2,
-      z: position.z - room.z/2,
+      z: position.z - room.z/2
     };
   };
   this.extractFromRoom = function(position) {
     return {
       x: position.x + room.x/2,
       y: position.y + room.y/2,
-      z: position.z + room.z/2,
+      z: position.z + room.z/2
     };
   };
-  this.renderMap = function(i, j) {
-    var ij = this.extractFromRoom([i, j]),
+  this.renderMap = function(_i, _j) {
+    var ij = this.extractFromRoom([_i, _j]),
         i = ij[0], j = ij[1];
     this.map.width = this.map.width;
     var ctx = this.map.getContext('2d');
@@ -80,7 +80,7 @@ Scene.prototype.addCloud = function(position, size) {
   (new Cloud(this.fitToRoom(position), size)).addTo(this.scene);
 };
 Scene.prototype.addSurface = function(position, size, traits) {
-  (new Surface(this.fitToRoom(position), traits[0])).addTo(this.scene);
+  (new Surface(this.fitToRoom(position), traits, traits[3])).addTo(this.scene);
 };
 Scene.prototype.add = function(elm) {
   this.scene.add(elm);
