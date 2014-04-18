@@ -1,8 +1,8 @@
 var mode = { rotate: true };
 var Controls = function(render, camera, scene) {
-  this.angleLR = Math.PI/2;
+  this.angleLR = 0;
   this.angleUD = 0;
-  this.position = {x: 0, y: -60, z: 0};
+  this.position = {x: -60, y: 0, z: 0};
   this.hypZ = Math.sqrt(_2(this.position.x) + _2(this.position.y) + _2(this.position.z));
   this.camera = camera;
   this.scene = scene;
@@ -103,6 +103,15 @@ var Controls = function(render, camera, scene) {
 	elm.className = 'active';
       });
   });
+  [].map.call(
+    document.querySelectorAll("#views li a"), 
+    function(elm) {
+      elm.addEventListener('click', function(evt) {
+	evt.preventDefault();
+	var face = parseInt(elm.id.split('').pop(), 10);
+	this.face(face);
+      }.bind(this));
+  }.bind(this));
   this.render();
 };
 Controls.prototype.render = function() {

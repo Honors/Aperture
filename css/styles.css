@@ -27,6 +27,15 @@ body {
   margin: 0;
   padding: 0;
   list-style: none;
+  margin-top: 10px;
+  text-align: center;
+}
+#tools ul a {
+  color: #333;
+  text-decoration: none;
+}
+#tools ul a:hover {
+  color: red;
 }
 #modes .active {
   color: red;
