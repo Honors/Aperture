@@ -40,4 +40,7 @@ body {
 #modes .active {
   color: red;
 }
+.hidden {
+  display: none;
+}
 

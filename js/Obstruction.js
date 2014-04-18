@@ -36,7 +36,6 @@ var Obstruction = function(Geometry, options) {
   cube.position.x = frame.position.x = x;
   cube.position.z = frame.position.z = z;
   cube.position.y = frame.position.y = y;
-  if( isSurface ) console.log(rotation, incline);
   cube.rotation.x = frame.rotation.x = (360 - rotation || 0) * Math.PI/180;
   cube.rotation.z = frame.rotation.z = (incline || 0) * Math.PI/180;
   cube.rotation.y = frame.rotation.y = 0;
