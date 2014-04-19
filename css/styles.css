@@ -6,17 +6,21 @@ body {
 .three-js {
   width: 900px;
   height: 600px;
-  outline: 1px solid #333;
   position: absolute;
   top: 0;
   left: 50%;
   margin-left: -451px;
 }
 #tools {
+  background: white;
   position: absolute;
-  top: 20px;
-  left: 20px;
-  width: 100px;
+  top: 0;
+  left: 0;
+  padding: 20px;
+  box-sizing: border-box;
+  width: 180px;
+  border-right: 1px solid #333;
+  height: 100%;
 }
 #map {
   width: 100px;
@@ -28,7 +32,6 @@ body {
   padding: 0;
   list-style: none;
   margin-top: 10px;
-  text-align: center;
 }
 #tools ul a {
   color: #333;

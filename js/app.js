@@ -1,4 +1,4 @@
-var scene = new Scene(document.getElementById('map'));
+var scene = new Scene();
 scene.makeRoom(44, 45, 15);
 var parseObstruction = function(line) {
   var cols = line.split(/\s+/),

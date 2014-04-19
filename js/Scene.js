@@ -2,7 +2,6 @@ var Scene = function(map) {
   var scene = new THREE.Scene();
   var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 1000);
   this.scene = scene;
-  this.map = map;
   this.camera = camera;
   this.init();
 };
@@ -14,7 +13,7 @@ Scene.prototype.init = function() {
     renderer.domElement,
     document.body.firstChild);
   this.renderer = renderer;
-  new Controls(this.render.bind(this), this.camera, this);
+  this.controls = new Controls(this.render.bind(this), this.camera, this);
 };
 Scene.prototype.render = function() {
   requestAnimationFrame(arguments.callee.bind(this));
@@ -36,22 +35,6 @@ Scene.prototype.makeRoom = function(x, y, z) {
       y: position.y - room.y/2,
       z: position.z - room.z/2
     };
-  };
-  this.extractFromRoom = function(position) {
-    return {
-      x: position.x + room.x/2,
-      y: position.y + room.y/2,
-      z: position.z + room.z/2
-    };
-  };
-  this.renderMap = function(_i, _j) {
-    var ij = this.extractFromRoom([_i, _j]),
-        i = ij[0], j = ij[1];
-    this.map.width = this.map.width;
-    var ctx = this.map.getContext('2d');
-    ctx.rect(20, 20, 58, 58);
-    ctx.stroke();
-    ctx.fillRect(i/x * 58 + 20, 100 - ((j/y * 58) + 20), 4, 4);
   };
   pads.map(function(pad) {
     pad.addTo(this.scene);

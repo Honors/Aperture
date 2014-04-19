@@ -61,10 +61,11 @@ var Controls = function(render, camera, scene) {
   }.bind(this));
   this.takeAngles = function(LR, UD) {
     if( UD <= 0 && UD >= -Math.PI/2 ) {
+      var hypZ = this.hypZ();
       this.angleLR = LR;
       this.angleUD = UD;
-      this.position.z = Math.sin(Math.PI+this.angleUD)*this.hypZ();
-      var newHyp = Math.cos(this.angleUD)*this.hypZ();
+      this.position.z = Math.sin(Math.PI+this.angleUD)*hypZ;
+      var newHyp = Math.cos(this.angleUD)*hypZ;
       this.position.x = Math.cos(Math.PI+this.angleLR)*newHyp;
       this.position.y = Math.sin(Math.PI+this.angleLR)*newHyp;
     }
