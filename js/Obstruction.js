@@ -2,15 +2,16 @@ function construct(constructor, args) {
   return new (constructor.bind.apply(constructor, [null].concat(args)));
 }
 var Obstruction = function(Geometry, options) { 
+  var isRectangle = Geometry == THREE.CubeGeometry;
+  var isSphere = Geometry == THREE.SphereGeometry;
+  var isSurface = Geometry == THREE.ParametricGeometry;
+  var isSensor = isSphere || isSurface;
   var position = options.position,
       parameters = options.parameters,
       gray = options.gray,
       rotation = options.rotation,
       incline = options.incline;
   var x = position.x, y = position.y, z = position.z;
-  var isRectangle = Geometry == THREE.CubeGeometry;
-  var isSphere = Geometry == THREE.SphereGeometry;
-  var isSurface = Geometry == THREE.ParametricGeometry;
   var precision = isRectangle ? 1 : (isSurface ? 100 : 50);
   var geometry = construct(Geometry, parameters.concat([precision, precision]));
   var material = new THREE.MeshBasicMaterial({
@@ -18,7 +19,6 @@ var Obstruction = function(Geometry, options) {
     color: Math.random()*0x1000000
   });
   var frame = new THREE.Mesh(geometry, material);
-  var isSensor = isSphere || isSurface;
   material = new THREE.MeshBasicMaterial({
     wireframe: false,
     transparent: isSensor,
@@ -32,6 +32,7 @@ var Obstruction = function(Geometry, options) {
 	Math.floor(Math.random()*0x40+0x60)*0x10101))
   });
   var cube = new THREE.Mesh(geometry, material);
+  cube.userData = { fire: isSurface, smoke: isSphere };
   cube.overdraw = true;
   cube.position.x = frame.position.x = x;
   cube.position.z = frame.position.z = z;
@@ -111,7 +112,7 @@ var FireDetector = function(pos, size, traits) {
     traits,
     function(u, v) {
       // A piecewise surface of revolution from two parametric functions.
-      var r = 5, t = 2 * Math.PI * u, h = 10;
+      var r = 5, t = 2 * Math.PI * u, h = 210;
       return piecewise([
 	{
 	  range: [0, 0.5], 

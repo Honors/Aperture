@@ -1,8 +1,15 @@
+var layers = function() {
+  return {
+    fire: document.getElementById('fireOn').checked,
+    smoke: document.getElementById('smokeOn').checked
+  };
+};
 var Scene = function(map) {
   var scene = new THREE.Scene();
   var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 1000);
   this.scene = scene;
   this.camera = camera;
+  this.benched = [];
   this.init();
 };
 Scene.prototype.init = function() {
@@ -17,6 +24,20 @@ Scene.prototype.init = function() {
 };
 Scene.prototype.render = function() {
   requestAnimationFrame(arguments.callee.bind(this));
+  this.scene.children.forEach(function(child) {
+    if( (child.userData.fire && !layers().fire) ||
+        (child.userData.smoke && !layers().smoke) ) {
+      this.benched.push(child);
+      this.scene.remove(child);
+    }
+  }.bind(this));
+  this.benched.map(function(x){return x;}).forEach(function(benched) {
+    if( (benched.userData.fire && layers().fire) ||
+        (benched.userData.smoke && layers().smoke) ) {
+      this.scene.add(benched);
+      this.benched.splice(this.benched.indexOf(benched), 1);
+    }
+  }.bind(this));
   this.renderer.render(this.scene, this.camera);
 };
 Scene.prototype.makeRoom = function(x, y, z) {
