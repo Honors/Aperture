@@ -20,6 +20,7 @@ var Controls = function(render, camera, scene) {
       new THREE.Vector3(-1, 0, 0),
       new THREE.Vector3(0, -1, 0),
       new THREE.Vector3(0, 0, -1)][key - 1];
+    this.position = this.lookingVector.clone().normalize().multiplyScalar(-60);
   };
   document.addEventListener('keydown', function(evt) {
     if( [65, 68, 87, 83].indexOf(evt.keyCode) != -1) {
@@ -70,6 +71,12 @@ var Controls = function(render, camera, scene) {
     } else if( mode.zoom ) {
       this.zoom(y);
     } else {
+      // panning
+      var basis = [
+        this.lookingVector.clone().normalize(),
+	new THREE.Vector3(-this.lookingVector.y, this.lookingVector.x, 0),
+	new THREE.Vector3(0, 0, 1)];
+      this.position.add(inBasis(basis, 0, x/6, y/6));
     }
   }.bind(this));
   [].map.call(
@@ -100,7 +107,7 @@ var Controls = function(render, camera, scene) {
 Controls.prototype.render = function() {
   this.camera.position = this.position;
   this.camera.up = new THREE.Vector3(0,0,1);
-  this.camera.lookAt(this.lookingVector);
+  this.camera.lookAt(this.position.clone().add(this.lookingVector.clone().multiplyScalar(10)));
   (this.scene.renderMap || function(){}).bind(this.scene)(this.position.x, this.position.y);
   requestAnimationFrame(this.render.bind(this));
 };
