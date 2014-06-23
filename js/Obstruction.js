@@ -38,11 +38,20 @@ STL.prototype.mesh = function(name) {
   return object;
 };
 STL.prototype.floorMesh = function(name, image) {
-  var mesh = STL.prototype.mesh.call(this, name);
-  var material = new THREE.MeshBasicMaterial({
-    map: new THREE.Texture(image)
+  var geo = new THREE.Geometry();
+  this.ts.forEach(function(t, i) {
+    [].push.apply(geo.vertices, t.vertices);
+    geo.faces.push(
+      new THREE.Face3(i*3, i*3+1, i*3+2,
+        t.normal));
   });
-  var object = new THREE.Mesh(mesh.geometry, material);
+  var texture = new THREE.Texture(image);
+  texture.needsUpdate = true;
+  // TODO: an image map cannot be applied to a custom shape without
+  // defining UVs. Check the PLaneGeometry source.
+  // var material = new THREE.MeshBasicMaterial( { map : texture } ); 
+  var material = new THREE.MeshNormalMaterial(); 
+  var object = new THREE.Mesh(geo, material);
   object.name = name;
   object.overdraw = true;
   object.position.x = 0;
