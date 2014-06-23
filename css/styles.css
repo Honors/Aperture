@@ -9,9 +9,6 @@ body {
 }
 #tools {
   background: white;
-  position: absolute;
-  top: 0;
-  left: 0;
   padding: 20px;
   box-sizing: border-box;
   width: 180px;
@@ -39,7 +36,13 @@ body {
 #modes .active {
   color: red;
 }
+#ctl00_RadMenu1 {
+  display: none;
+}
 [data-identifier], .hidden {
   display: none;
+}
+#extras, #content {
+  float: left;
 }
 
