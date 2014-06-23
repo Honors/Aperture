@@ -1,59 +1,80 @@
 var mode = { rotate: true };
-var Controls = function(render, camera, scene) {
-  this.lookingVector = new THREE.Vector3(1, 0, 0);
-  this.position = new THREE.Vector3(-60, 0, 0);
+var Controls = function(render, camera, scene, elm) {
+  this.sceneRender = render;
+  this.focalPoint = new THREE.Vector3(0,0,0);
+  this.rotationVector = new THREE.Vector3(1, 0, 0);
+  this.basis = [
+    new THREE.Vector3(1, 0, 0),
+    new THREE.Vector3(0, 1, 0),
+    new THREE.Vector3(0, 0, 1)
+  ];
+  this.upVector = function() { return this.basis[2].clone(); };
+  this.lookingVector = function(update) {
+    if( update ) {
+      this.rotationVector = update;
+    }
+    return this.rotationVector.clone();
+  };
+  this._position = new THREE.Vector3(-100, 0, 0);
+  this.position = function() {
+    var v = this.focalPoint.clone().add(this._position),
+        basis = this.basis;
+    return basis[0].clone().multiplyScalar(v.x).add(
+	    basis[1].clone().multiplyScalar(v.y).add(
+	      basis[2].clone().multiplyScalar(v.z)));
+  };
   this.hypZ = function() {
-    return Math.sqrt(_2(this.position.x) + _2(this.position.y) + _2(this.position.z));
+    return Math.sqrt(_2(this._position.x) + _2(this._position.y) + _2(this._position.z));
   };
   this.camera = camera;
   this.scene = scene;
-  this.rotate = function(right, left, up, down) {
-    this.lookingVector.add(new THREE.Vector3((right ? 1 : (left ? -1 : 0)) * 0.05, 0, (up ? 1 : (down ? -1 : 0)) * 0.05));
-  };
-  this.move = function(left, right, up, down) {
-    this.position.add(new THREE.Vector3((left ? 1 : (right ? -1 : 0)) * 10, 0, (up ? 1 : (down ? -1 : 0)) * 10));
-  };
+  this.panning = false;
   this.face = function(key) {
-    this.lookingVector = [
+    this.lookingVector([
       new THREE.Vector3(1, 0, 0),
       new THREE.Vector3(0, 1, 0),
       new THREE.Vector3(-1, 0, 0),
       new THREE.Vector3(0, -1, 0),
-      new THREE.Vector3(0, 0, -1)][key - 1];
-    this.position = this.lookingVector.clone().normalize().multiplyScalar(-60);
+      new THREE.Vector3(0, 0, -1)][key - 1]);
+    this._position = this.lookingVector().clone().normalize().multiplyScalar(-this.hypZ());
+  };
+  var start, isSelectMode = false;
+  var selectMode = function(x, evt) {
+    isSelectMode = x;
+    enterSelectMode(isSelectMode,
+      [evt.clientX/window.innerWidth, evt.clientY/window.innerHeight]);
   };
   document.addEventListener('keydown', function(evt) {
-    if( [65, 68, 87, 83].indexOf(evt.keyCode) != -1) {
-      evt.preventDefault();
-      this.rotate(
-        evt.keyCode == 65, evt.keyCode == 68,
-        evt.keyCode == 87, evt.keyCode == 83);
-    } else if( [37, 38, 39, 40].indexOf(evt.keyCode) != -1 ) {
-      evt.preventDefault();
-      this.move(
-        evt.keyCode == 39, evt.keyCode == 37,
-        evt.keyCode == 38, evt.keyCode == 40);
-    } else if( [49, 50, 51, 52, 53].indexOf(evt.keyCode) != -1 ) {
-      evt.preventDefault();
-      this.face(evt.keyCode - 48);
+    if( evt.keyCode == 46 ) {
+      deleteSelection();
     }
-    render();
+  });
+  elm.addEventListener('mousedown', function(evt) {
+    if( evt.which == 3 ) selectMode(true, evt);
+    else {
+      start = [evt.x, evt.y];
+      this.panning = mode.pan;
+    }
   }.bind(this));
-  var start;
-  document.addEventListener('mousedown', function(evt) {
-    start = [evt.x, evt.y];
-  });
-  document.addEventListener('mouseup', function(evt) {
-    start = undefined;
-  });
+  elm.addEventListener('mouseup', function(evt) {
+    if( evt.which == 3 ) selectMode(false, evt);
+    else start = undefined;
+    this.panning = false;
+  }.bind(this));
+  elm.addEventListener('contextmenu', function(evt) {
+    evt.preventDefault();
+  }.bind(this));
+ 
   this.zoom = function(delta) {
-    this.position.add(this.lookingVector.clone().multiplyScalar(-delta));
+    this._position.add(this.lookingVector().clone().multiplyScalar(-delta));
   };
-  document.addEventListener('mousewheel', function(evt) {
+  elm.addEventListener('mousewheel', function(evt) {
     evt.preventDefault();
     this.zoom(evt.wheelDelta/5);
   }.bind(this));
-  document.addEventListener('mousemove', function(evt) {
+  elm.addEventListener('mousemove', function(evt) {
+    if( evt.which == 3 ) selectMode(isSelectMode, evt);
+
     if( !start ) return;
     var end = [evt.x, evt.y],
 	delta = end.map(function(x, i) { return x - start[i]; }),
@@ -62,21 +83,17 @@ var Controls = function(render, camera, scene) {
     if( mode.rotate ) {
       var dxy = -x/10 * Math.PI/50,
 	  dz = y/10 * Math.PI/50;
-      var xy = Math.atan2(this.position.y, this.position.x) + dxy,
-          z  = Math.atan2(this.position.z, sqrt(_2(this.position.x) + _2(this.position.y))) + dz;
+      var xy = Math.atan2(this._position.y, this._position.x) + dxy,
+          z  = Math.atan2(this._position.z, sqrt(_2(this._position.x) + _2(this._position.y))) + dz;
       var zpos = Math.sin(z) * this.hypZ(),
           r = Math.cos(z) * this.hypZ();
-      this.position = new THREE.Vector3(r * Math.cos(xy), r * Math.sin(xy), zpos);
-      this.lookingVector = this.position.clone().normalize().multiplyScalar(-1);
+      this._position = new THREE.Vector3(r * Math.cos(xy), r * Math.sin(xy), zpos);
+      this.lookingVector(this._position.clone().normalize().multiplyScalar(-1));
     } else if( mode.zoom ) {
       this.zoom(y);
     } else {
       // panning
-      var basis = [
-        this.lookingVector.clone().normalize(),
-	new THREE.Vector3(-this.lookingVector.y, this.lookingVector.x, 0),
-	new THREE.Vector3(0, 0, 1)];
-      this.position.add(inBasis(basis, 0, x/6, y/6));
+      this.focalPoint.add(new THREE.Vector3(x, -y, 0));
     }
   }.bind(this));
   [].map.call(
@@ -105,10 +122,22 @@ var Controls = function(render, camera, scene) {
   this.render();
 };
 Controls.prototype.render = function() {
-  this.camera.position = this.position;
-  this.camera.up = new THREE.Vector3(0,0,1);
-  this.camera.lookAt(this.position.clone().add(this.lookingVector.clone().multiplyScalar(10)));
-  (this.scene.renderMap || function(){}).bind(this.scene)(this.position.x, this.position.y);
+  var xs = this.scene.children.filter(function(x) { return x.name == "motion_axes" });
+  if( xs.length ) {
+    var x = xs[0];
+    x.position = this.focalPoint.clone();
+    x.visible = this.panning;
+  } else if( this.scene.children.length > 0 ) {
+    var x = drawVector(new THREE.Vector3(0, 0, -5000), new THREE.Vector3(0, 0, 10000));
+    x.position = this.focalPoint.clone();
+    this.scene.add(x);
+    x.name = "motion_axes";
+    x.visible = this.panning;
+  }
+
+  this.camera.position = this.position();
+  this.camera.up = this.upVector();
+  this.camera.lookAt(this.position().clone().add(this.lookingVector().clone().multiplyScalar(10)));
+  this.sceneRender(this.scene, this.camera);
   requestAnimationFrame(this.render.bind(this));
 };
-

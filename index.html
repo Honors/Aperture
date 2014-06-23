@@ -20,28 +20,39 @@
 	  <li><a href="#" id="view4">West View</a></li>
 	  <li><a href="#" id="view5">Top View</a></li>
 	</ul>
-	<ul id="layers">
-	  <li><input type="checkbox" id="fireOn">Fire Detectors</li>
-	  <li><input type="checkbox" id="smokeOn">Smoke Detectors</li>
-	</ul>
+	<div id="visibleRange" class="block">
+	  <span>Visible range of objects</span>
+	  <br><em>X Coordinates</em>
+	  <br><input type="range" id="xMin" min="0" max="100" value="0">
+	  <input type="range" id="xMax" min="0" max="100" value="100">
+	  <br><em>Y Coordinates</em>
+	  <br><input type="range" id="yMin" min="0" max="100" value="0">
+	  <input type="range" id="yMax" min="0" max="100" value="100">
+	  <br><em>Z Coordinates</em>
+	  <br><input type="range" id="zMin" min="0" max="100" value="0">
+	  <input type="range" id="zMax" min="0" max="100" value="100">
+	</div>
+	<div id="objects" class="block"></div>
       </div>
     </div>
     <div id="content">
       <img alt="" src="map.png" id="bitmap" class="hidden" data-identifier="3dImage">
       <script type="text/tsv" id="data" data-identifier="3dData">
-	 6a32ada42	2	42	10	0	0	0	310	-30	0
-	 6a32ada42	42	1	20	0	0	0	310	-30	0
-	 Rectangle	36.125	38.25	2	5.25	1.5	4	0	0	0
-	 Rectangle	36.125	5.875	1.75	6.5	1.5	4	0	0	0
-	 PressureV	15.25	37.5	7	15.5	0	0	0	90	2.5
-	 PressureV	12	6	5	10	0	0	0	90	1.75
+	Rectangle	0	0	0	100	100	0.5	0	0	0
+	Rectangle	36.125	38.25	2	5.25	1.5	4	0	0	0
+	Rectangle	36.125	5.875	1.75	6.5	1.5	4	0	0	0
       </script>
-      <script src="js/util.js"></script>
+      <script src="js/utils.js"></script>
+      <script src="js/hashers.js"></script>
+      <script src="js/recognize.js"></script>
+      <script src="js/cluster.js"></script>
+      <script src="js/extract.js"></script>
+      <script src="js/circuits.js"></script>
+      <script src="js/explode.js"></script>
       <script src="js/Controls.js"></script>
-      <script src="js/Scene.js"></script>
+      <script src="js/parse.js"></script>
       <script src="js/Obstruction.js"></script>
       <script src="js/app.js"></script>
     </div>
   </body>
 </html>
-

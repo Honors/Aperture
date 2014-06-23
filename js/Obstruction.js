@@ -1,131 +1,170 @@
-function construct(constructor, args) {
-  return new (constructor.bind.apply(constructor, [null].concat(args)));
-}
-var Obstruction = function(Geometry, options) { 
-  var isRectangle = Geometry == THREE.CubeGeometry;
-  var isSphere = Geometry == THREE.SphereGeometry;
-  var isSurface = Geometry == THREE.ParametricGeometry;
-  var isSensor = isSphere || isSurface;
-  var position = options.position,
-      parameters = options.parameters,
-      gray = options.gray,
-      rotation = options.rotation,
-      incline = options.incline;
-  var x = position.x, y = position.y, z = position.z;
-  var precision = isRectangle ? 1 : (isSurface ? 100 : 50);
-  var geometry = construct(Geometry, parameters.concat([precision, precision]));
-  var material = new THREE.MeshBasicMaterial({
-    wireframe: true,
-    color: Math.random()*0x1000000
+var equal = function(uv) {
+  var u = uv[0], v = uv[1];
+  return u.clone().sub(v).length() < 0.0001;
+};
+var notEquals = function(/* ps... */) {
+  var ps = [].slice.call(arguments);
+  return none(ps.map(equal));
+};
+var none = function(xs) {
+  return !xs.reduce(function(a, x) {
+    return a || x;
+  }, false);
+};
+
+var Tri = function(a, b, c) {
+  this.vertices = [a, b, c];
+  this.normal = b.clone().sub(a).cross(b.clone().sub(c)).normalize();
+};
+
+var STL = function(ts) {
+  this.ts = ts;
+};
+STL.prototype.mesh = function(name) {
+  var geo = new THREE.Geometry();
+  this.ts.forEach(function(t, i) {
+    [].push.apply(geo.vertices, t.vertices);
+    geo.faces.push(
+      new THREE.Face3(i*3, i*3+1, i*3+2,
+        t.normal));
   });
-  var frame = new THREE.Mesh(geometry, material);
-  material = new THREE.MeshBasicMaterial({
-    wireframe: false,
-    transparent: isSensor,
-    opacity: isSensor ? 0.7 : 1,
-    color: gray ? 
-      0x444444 :
-      (isSphere ?
-       0xbada55 :
-       (isSurface ?
-        0xff3336 :
-	Math.floor(Math.random()*0x40+0x60)*0x10101))
-  });
-  var cube = new THREE.Mesh(geometry, material);
-  cube.userData = { fire: isSurface, smoke: isSphere };
-  cube.overdraw = true;
-  cube.position.x = frame.position.x = x;
-  cube.position.z = frame.position.z = z;
-  cube.position.y = frame.position.y = y;
-  cube.rotation.x = frame.rotation.x = (360 - rotation || 0) * Math.PI/180;
-  cube.rotation.z = frame.rotation.z = (incline || 0) * Math.PI/180;
-  cube.rotation.y = frame.rotation.y = 0;
-  this.shape = cube;
-  this.frame = frame;
+  var object = new THREE.Mesh(
+    geo, new THREE.MeshNormalMaterial());
+  object.name = name;
+  object.overdraw = true;
+  object.position.x = 0;
+  object.position.y = 0;
+  object.position.z = 0;
+  return object;
 };
-var ShapeData = function(position, size) {
-  this.posCoords = [position.x, position.y, position.z];
-  this.sizeCoords = [size.x, size.y, size.z];
-  this.position = position;
-  this.size = size;
+
+var Obstruction = function(f) {
+  this.f = f;
 };
-var Rectangle = function(position, size, gray) {
-  this.gray = gray;
-  ShapeData.call(this, position, size);
+Obstruction.prototype.STL = function(p, pos, normal) {
+  var fp = function(h, t) {
+    var f = surfaceBasisTransformer(
+      formBasis(normal))(this.f);
+    return f(h, t).add(pos);
+  }.bind(this);
+  var ps = [];
+  for( var i = 0; i <= p; i++ ) {
+    ps[i] = [];
+    for( var j = 0; j <= p; j++ ) {
+      ps[i][j] = fp(i/p, j/p);
+    }
+  }
+
+  var ts = [];
+  for( var i = 1; i <= p; i++ ) {
+    for( var j = 1; j <= p; j++ ) {
+      var bb = ps[i][j],
+          ba = ps[i][j-1],
+	  aa = ps[i-1][j-1];
+      if( notEquals([aa, ba], [ba, bb], [aa, bb]) ) {
+	ts.push(new Tri(ba, aa, bb));
+      }
+    }
+  }
+  for( var i = 0; i <= p-1; i++ ) {
+    for( var j = 0; j <= p-1; j++ ) {
+      var aa = ps[i][j],
+          ab = ps[i][j+1],
+	  bb = ps[i+1][j+1];
+      if( notEquals([aa, ab], [ab, bb], [aa, bb]) ) {
+	ts.push(new Tri(bb, aa, ab));
+      }
+    }
+  }
+
+  return new STL(ts);
 };
-Rectangle.prototype.addTo = function(scene) {
-  var cube = new Obstruction(THREE.CubeGeometry, {
-    position: this.position,
-    parameters: [this.size.x, this.size.y, this.size.z],
-    gray: this.gray
-  });
-  scene.add(cube.shape);
+
+var Sphere = function(radius) {
+  this.type = "Sphere";
+  this.f = function(h, t) {
+    var theta = Math.PI * 2 * t,
+        h = (h - 0.5) * 2 * radius;
+    return new THREE.Vector3(
+      Math.cos(theta) * sqrt(_2(radius) - _2(h)),
+      Math.sin(theta) * sqrt(_2(radius) - _2(h)),
+      h);
+  };
 };
-var Cylinder = function(position, size, traits) {
-  ShapeData.call(this, position, size);
-  this.traitsCoords = traits;
-  this.traits = {};
-  this.traits.rotation = traits[0];
-  this.traits.incline = traits[1];
-  this.traits.radius = traits[2];
+Sphere.prototype = Obstruction.prototype;
+
+var Cylinder = function(radius, height) {
+  this.type = "Cylinder";
+  this.f = revolvingParametric(
+    piecewise([
+      { range: [0, 0.25],
+	fn: function(h) {
+	  return new THREE.Vector2(h*radius, 0);
+	} },
+      { range: [0.25, 0.75],
+	fn: function(h) {
+	  h *= height;
+	  return new THREE.Vector2(radius, h);
+	} },
+      { range: [0.75, 1],
+	fn: function(h) {
+	  return new THREE.Vector2((1-h)*radius, height);
+	} }
+    ]));
 };
-Cylinder.prototype.addTo = function(scene) {
-  var cube = new Obstruction(THREE.CylinderGeometry, {
-    position: this.position,
-    parameters: [this.traits.radius, this.traits.radius, this.size.x],
-    incline: this.traits.incline,
-    rotation: this.traits.rotation
-  });
-  scene.add(cube.shape);
+Cylinder.prototype = Obstruction.prototype;
+
+var vSum = function(/* vs... */) {
+  var vs = [].slice.call(arguments);
+  return vs.reduce(function(a, x) {
+    return a.add(x);
+  }, new THREE.Vector3(0, 0, 0));
 };
-var Cloud = function(position, size) {
-  ShapeData.call(this, position, size);
+var neg = function(x) {
+  return x.clone().multiplyScalar(-1);
 };
-Cloud.prototype.addTo = function(scene) {
-  var cube = new Obstruction(THREE.SphereGeometry, {
-    position: this.position,
-    parameters: [this.size.x]
-  });
-  scene.add(cube.shape);
+var Rectangle = function(length, width, height) {
+  this.type = "Rectangle";
+  this.f = function(h, t) {
+    var hv = new THREE.Vector3(0, 0, height),
+	wv = new THREE.Vector3(0, width, 0),
+	lv = new THREE.Vector3(length, 0, 0);
+    if( h >= 0 && h <= 0.3 ) {
+      return vSum(lv.multiplyScalar(Math.round(h)),
+        wv.multiplyScalar(Math.round(t)));
+    } else if( h > 0.3 && h <= 0.7 ) {
+      var hp = (h - 0.3)/0.4;
+      if( t >= 0 && t <= 0.25 ) {
+	var tp = t * 4;
+        return vSum(
+	  hv.multiplyScalar(Math.round(hp)),
+	  wv.multiplyScalar(Math.round(tp)),
+	  lv);
+      } else if( t > 0.25 && t <= 0.5 ) {
+	var tp = (t - 0.25) * 4;
+        return vSum(
+	  hv.multiplyScalar(Math.round(hp)),
+	  neg(lv).multiplyScalar(Math.round(tp)),
+	  lv, wv);
+      } else if( t > 0.5 && t <= 0.75 ) {
+	var tp = (t - 0.5) * 4;
+        return vSum(
+	  hv.multiplyScalar(Math.round(hp)),
+	  neg(wv).multiplyScalar(Math.round(tp)),
+	  wv);
+      } else {
+	var tp = (t - 0.75) * 4;
+        return vSum(
+	  hv.multiplyScalar(Math.round(hp)),
+	  lv.multiplyScalar(Math.round(tp)));
+      }
+    } else {
+        return vSum(
+	  lv.multiplyScalar(Math.round(h)),
+	  wv.multiplyScalar(Math.round(t)),
+	  hv);
+    }
+  };
 };
-var Surface = function(position, traits, fun) {
-  ShapeData.call(this, position, []);
-  this.traitsCoords = traits.concat([fun]);
-  this.traits = {};
-  this.traits.rotation = traits[0];
-  this.traits.incline = traits[1];
-  this.traits.radius = traits[2];
-  this.fun = fun;
-};
-Surface.prototype.addTo = function(scene) {
-  var cube = new Obstruction(THREE.ParametricGeometry, {
-    position: this.position,
-    parameters: [this.fun],
-    incline: this.traits.incline,
-    rotation: this.traits.rotation
-  });
-  scene.add(cube.shape);
-};
-var FireDetector = function(pos, size, traits) {
-  return new Surface(
-    pos,
-    traits,
-    function(u, v) {
-      // A piecewise surface of revolution from two parametric functions.
-      var r = 5, t = 2 * Math.PI * u, h = 210;
-      return piecewise([
-	{
-	  range: [0, 0.5], 
-	  fn: revolvingParametric(vectorLine(0, 0, 105/210*h, -105/210*h)).bind({}, t)
-	},
-	{
-	  range: [0.5, 1], 
-	  fn: revolvingParametric(bezier([105/210*h, -105/210*h],
-	    [178/210*h, -153/210*h],
-	    [97/210*h, -210/210*h],
-	    [0/210*h, -207/210*h])).bind({}, t)
-	}
-      ])(v);
-    });
-};
+Rectangle.prototype = Obstruction.prototype;
 
