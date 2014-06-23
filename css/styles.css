@@ -4,7 +4,7 @@ body {
   width: 100%;
 }
 .three-js {
-  width: 600px;
+  width: 500px;
   height: 600px;
 }
 .block {
@@ -15,7 +15,6 @@ body {
   }
 #tools {
   background: white;
-  position: absolute;
   top: 0;
   left: 0;
   padding: 20px;

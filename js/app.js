@@ -1,7 +1,8 @@
 // renderer
 var renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
-document.body.appendChild(renderer.domElement);
+renderer.domElement.className = "three-js";
+document.querySelector("#content").appendChild(renderer.domElement);
 
 var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 6000);
 
@@ -168,6 +169,11 @@ controls.render();
 
 var setup = function() {
   var obstructions = parse(document.querySelector("[data-identifier='3dData']").innerText);
+  var floor = new Rectangle(45, 35, 0.2), 
+      img = document.querySelector("[data-identifier='3dImage']");
+  floor.position = new THREE.Vector3(0, 0, 0);
+  floor.normal = new THREE.Vector3(0, 0, 1);
+  scene.add(renderSTL(new FloorSTL(floor.STL(20, floor.position, floor.normal), img), "Floor", floor.type));
   obstructions.forEach(function(o, i) {
     scene.add(renderSTL(o.STL(20, o.position, o.normal), o.type + " " + i, o.type));
   });

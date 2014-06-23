@@ -39,10 +39,13 @@ var Controls = function(render, camera, scene, elm) {
     this._position = this.lookingVector().clone().normalize().multiplyScalar(-this.hypZ());
   };
   var start, isSelectMode = false;
-  var selectMode = function(x, evt) {
-    isSelectMode = x;
+  var selectMode = function(mode, evt) {
+    isSelectMode = mode;
+    var rect = elm.getBoundingClientRect(),
+        x = evt.clientX - rect.left,
+	y = evt.clientY - rect.top;
     enterSelectMode(isSelectMode,
-      [evt.clientX/window.innerWidth, evt.clientY/window.innerHeight]);
+      [x/elm.offsetWidth, y/elm.offsetHeight]);
   };
   document.addEventListener('keydown', function(evt) {
     if( evt.keyCode == 46 ) {

@@ -37,6 +37,27 @@ STL.prototype.mesh = function(name) {
   object.position.z = 0;
   return object;
 };
+STL.prototype.floorMesh = function(name, image) {
+  var mesh = STL.prototype.mesh.call(this, name);
+  var material = new THREE.MeshBasicMaterial({
+    map: new THREE.Texture(image)
+  });
+  var object = new THREE.Mesh(mesh.geometry, material);
+  object.name = name;
+  object.overdraw = true;
+  object.position.x = 0;
+  object.position.y = 0;
+  object.position.z = 0;
+  return object;
+};
+
+var FloorSTL = function(stl, img) {
+  this.ts = stl.ts;
+  this.img = img;
+};
+FloorSTL.prototype.mesh = function(name) {
+  return STL.prototype.floorMesh.call(this, name, this.img);
+};
 
 var Obstruction = function(f) {
   this.f = f;
