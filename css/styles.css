@@ -4,12 +4,8 @@ body {
   width: 100%;
 }
 .three-js {
-  width: 900px;
+  width: 600px;
   height: 600px;
-  position: absolute;
-  top: 0;
-  left: 50%;
-  margin-left: -451px;
 }
 #tools {
   background: white;
@@ -43,7 +39,7 @@ body {
 #modes .active {
   color: red;
 }
-.hidden {
+[data-identifier], .hidden {
   display: none;
 }
 

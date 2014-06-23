@@ -8,7 +8,8 @@ var parseObstruction = function(line) {
   return new ({
     "6a32ada42": FireDetector,
     "Rectangle": Rectangle,
-    "PressureV": Cylinder
+    "PressureV": Cylinder,
+    "PressureVesselH": Cylinder
   }[cols[0]])(
     { x: pos[0], y: pos[1], z: pos[2] },
     { x: size[0], y: size[1], z: size[2] },
