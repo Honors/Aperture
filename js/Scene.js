@@ -62,7 +62,7 @@ Scene.prototype.makeRoom = function(x, y, z) {
   }.bind(this));
 
   var img = new THREE.MeshBasicMaterial({
-    map: new THREE.Texture(document.getElementById('bitmap'))
+    map: new THREE.Texture(document.querySelector("[data-identifier='3dImage']"))
   });
   img.map.needsUpdate = true;
   // plane

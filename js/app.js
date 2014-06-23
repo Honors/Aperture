@@ -16,21 +16,26 @@ var parseObstruction = function(line) {
 };
 var parse = function(x) {
   var lines = x.split("\n");
-  return lines.slice(1, lines.length - 1).map(function(x) {
+  return lines.filter(function(x) {
+    return !x.match(/^\s*?$/);
+  }).map(function(x) {
     return parseObstruction(x.replace(/^\s+/, ''));
   });
 };
-var obstructions = parse(document.getElementById('data').innerText);
-obstructions.map(function(obstruction) {
-  match(
-    [[Rectangle, scene.addRectangle],
-     [Cylinder, scene.addCylinder],
-     [Cloud, scene.addCloud],
-     [Surface, scene.addSurface]],
-    obstruction).bind(scene)(
-      obstruction.position,
-      obstruction.size,
-      obstruction.traitsCoords);
-});
-scene.render();
+var setup = function() {
+  var obstructions = parse(document.querySelector("[data-identifier='3dData']").innerText);
+  obstructions.map(function(obstruction) {
+    match(
+      [[Rectangle, scene.addRectangle],
+       [Cylinder, scene.addCylinder],
+       [Cloud, scene.addCloud],
+       [Surface, scene.addSurface]],
+      obstruction).bind(scene)(
+	obstruction.position,
+	obstruction.size,
+	obstruction.traitsCoords);
+  });
+  scene.render();
+};
+window.onload = setup;
 
