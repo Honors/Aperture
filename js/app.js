@@ -97,10 +97,10 @@ var mutators = (function() {
     }, new THREE.Vector3(0,0,0)).multiplyScalar(1/allVs.length);
 
     // update max and min
-    ranges = ranges.map(function(range, i) {
+    ranges = allVs.length ? ranges.map(function(range, i) {
       var p = [center.x, center.y, center.z][i];
       return [Math.min(p, range[0]), Math.max(p, range[1])];
-    });
+    }) : ranges;
 
     // update and render object list
     objects.push({ name: name,
@@ -186,8 +186,10 @@ var parseObstruction = function(line) {
       traits = cols.slice(7, 10).map(function(x) { return parseFloat(x); });
   var obs = new ({
     "Rectangle": Rectangle,
-    "PressureV": Cylinder,
-    "PressureVesselH": Cylinder
+    "PressureVesselV": Cylinder,
+    "PressureVesselH": Cylinder,
+    "CylinderH": Cylinder,
+    "CylinderV": Cylinder
   }[cols[0]])(size[0], size[1], size[2]);
   obs.position = new THREE.Vector3(pos[0], pos[1], pos[2]);
   obs.normal = new THREE.Vector3(0, 0, 1);
