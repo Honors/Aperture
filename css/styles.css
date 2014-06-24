@@ -4,7 +4,6 @@ body {
   width: 100%;
 }
 .three-js {
-  width: 500px;
   height: 600px;
 }
 .block {
@@ -13,6 +12,23 @@ body {
   .block span {
     font-weight: bold;
   }
+#tools.collapsed .block, #tools.collapsed ul {
+  display: none;
+}
+#tools.collapsed {
+  width: 80px;
+  overflow: hidden;
+}
+#tools.collapsed #collapse {
+  color: #f00;
+}
+#collapse:before {
+  display: block;
+  content: "Collapse";
+}
+#tools.collapsed #collapse:before {
+  content: "Expand";
+}
 #tools {
   background: white;
   top: 0;
@@ -22,7 +38,7 @@ body {
   margin: 0;
   width: 350px;
   border-right: 1px solid #333;
-  height: 100%;
+  height: 600px;
   overflow: scroll;
   overflow-x: hidden;
   }

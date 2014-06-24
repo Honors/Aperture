@@ -2,6 +2,7 @@
 var renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.domElement.className = "three-js";
+renderer.domElement.style.width = window.innerWidth - 400;
 document.querySelector("#content").appendChild(renderer.domElement);
 
 var camera = new THREE.PerspectiveCamera(45, renderer.domElement.offsetWidth/renderer.domElement.offsetHeight, 1, 6000);
@@ -165,6 +166,17 @@ var renderSTL = mutators.renderSTL,
     range.addEventListener("input", renderFocus);
     range.addEventListener("change", renderFocus);
   });
+var toggleClass = function(elm, cls) {
+  if( elm.className.indexOf(cls) == -1 ) {
+    elm.className += " " + cls;
+  } else {
+    elm.className = elm.className.replace(" " + cls, "");
+  }
+};
+document.querySelector("#collapse").addEventListener("click", function(evt) {
+  evt.preventDefault();
+  toggleClass(document.querySelector("#tools"), "collapsed");
+});
 
 controls.render();
 
