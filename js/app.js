@@ -198,8 +198,8 @@ var parseObstruction = function(line) {
       traits = rest.slice(6, 9).map(function(x) { return parseFloat(x); });
   var obs = new ({
     "Rectangle": Rectangle,
-    "PressureVesselV": Cylinder,
-    "PressureVesselH": Cylinder,
+    "PressureVesselV": Vessel,
+    "PressureVesselH": Vessel,
     "CylinderH": Cylinder,
     "CylinderV": Cylinder
   }[cols[0]])(size[0], size[1], size[2]);
