@@ -172,6 +172,30 @@ var Cylinder = function(radius, height) {
 };
 Cylinder.prototype = Obstruction.prototype;
 
+var Vessel = function(radius, height) {
+  this.type = "Vessel";
+  this.desc = "Ves "+height+"@"+radius;
+  this.f = revolvingParametric(
+    piecewise([
+      { range: [0, 0.25],
+	fn: function(h) {
+	  var r = radius * sqrt(1 - _2(1-h));
+	  return new THREE.Vector2(r, h*radius-height);
+	} },
+      { range: [0.25, 0.75],
+	fn: function(h) {
+	  h *= height;
+	  return new THREE.Vector2(radius, h);
+	} },
+      { range: [0.75, 1],
+	fn: function(h) {
+	  var r = radius * sqrt(1 - _2(h));
+	  return new THREE.Vector2(r, height+h*radius);
+	} }
+    ]));
+};
+Vessel.prototype = Obstruction.prototype;
+
 var vSum = function(/* vs... */) {
   var vs = [].slice.call(arguments);
   return vs.reduce(function(a, x) {
