@@ -138,6 +138,7 @@ Obstruction.prototype.STL = function(p, pos, normal) {
 
 var Sphere = function(radius) {
   this.type = "Sphere";
+  this.desc = "Sph @"+radius;
   this.f = function(h, t) {
     var theta = Math.PI * 2 * t,
         h = (h - 0.5) * 2 * radius;
@@ -151,6 +152,7 @@ Sphere.prototype = Obstruction.prototype;
 
 var Cylinder = function(radius, height) {
   this.type = "Cylinder";
+  this.desc = "Cyl "+height+"@"+radius;
   this.f = revolvingParametric(
     piecewise([
       { range: [0, 0.25],
@@ -181,6 +183,7 @@ var neg = function(x) {
 };
 var Rectangle = function(length, width, height) {
   this.type = "Rectangle";
+  this.desc = "Rect "+length+"x"+width+"x"+height;
   this.f = function(h, t) {
     var hv = new THREE.Vector3(0, 0, height),
 	wv = new THREE.Vector3(0, width, 0),

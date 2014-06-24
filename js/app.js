@@ -168,22 +168,34 @@ var renderSTL = mutators.renderSTL,
 
 controls.render();
 
+var names = {};
+var suffix = function(name) {
+  names[name] = (names[name]||0) + 1;
+  return "" + names[name];
+};
 var setup = function() {
+  var roomDimensions = document.querySelector(
+    "[data-identifier='3dRoom']").innerText.match(
+      /\[([^\]]+)\]/)[1].split(" ").map(
+        function(x) { 
+	  return parseFloat(x)
+	  });
   var obstructions = parse(document.querySelector("[data-identifier='3dData']").innerText);
   var img = document.querySelector("[data-identifier='3dImage']"),
-      floor = new Floor(45, 35, 0.2, img); 
+      floor = new Floor(roomDimensions[0], roomDimensions[1], 0.2, img); 
   scene.add(renderSTL(floor, "Floor", "Rectangle"));
   obstructions.forEach(function(o, i) {
-    scene.add(renderSTL(o.STL(20, o.position, o.normal), o.type + " " + i, o.type));
+    scene.add(renderSTL(o.STL(20, o.position, o.normal), o.name + suffix(o.name), o.desc));
   });
 };
 window.onload = setup;
 
 var parseObstruction = function(line) {
   var cols = line.split(/\s+/),
-      pos = cols.slice(1, 4).map(function(x) { return parseFloat(x); }),
-      size = cols.slice(4, 7).map(function(x) { return parseFloat(x); }),
-      traits = cols.slice(7, 10).map(function(x) { return parseFloat(x); });
+      rest = cols.slice(2),
+      pos = rest.slice(0,3).map(function(x) { return parseFloat(x); }),
+      size = rest.slice(3, 6).map(function(x) { return parseFloat(x); }),
+      traits = rest.slice(6, 9).map(function(x) { return parseFloat(x); });
   var obs = new ({
     "Rectangle": Rectangle,
     "PressureVesselV": Cylinder,
@@ -192,6 +204,7 @@ var parseObstruction = function(line) {
     "CylinderV": Cylinder
   }[cols[0]])(size[0], size[1], size[2]);
   obs.position = new THREE.Vector3(pos[0], pos[1], pos[2]);
+  obs.name = cols[1];
   if( cols[0].match(/H$/) ) {
     obs.normal = new THREE.Vector3(0, 1, 0);
     obs.type += "H";
