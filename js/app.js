@@ -4,7 +4,7 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.domElement.className = "three-js";
 document.querySelector("#content").appendChild(renderer.domElement);
 
-var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 6000);
+var camera = new THREE.PerspectiveCamera(45, renderer.domElement.offsetWidth/renderer.domElement.offsetHeight, 1, 6000);
 
 var scene = new THREE.Scene();
 var controls = new Controls(renderer.render.bind(renderer), camera, scene, renderer.domElement);
