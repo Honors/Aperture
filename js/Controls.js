@@ -96,7 +96,7 @@ var Controls = function(render, camera, scene, elm) {
       this.zoom(y);
     } else {
       // panning
-      this.focalPoint.add(new THREE.Vector3(x, -y, 0));
+      this.focalPoint.add(new THREE.Vector3(x/6, -y/6, 0));
     }
   }.bind(this));
   [].map.call(

@@ -37,7 +37,10 @@ function calculateUVs(geometry) {
   return geometry;
 }
 
-var STL = function(ts) {
+var STL = function(ts, pos, normal, input) {
+  this.pos = pos;
+  this.normal = normal;
+  this.input = input;
   this.ts = ts;
   this.material = new THREE.MeshNormalMaterial();
 };
@@ -56,6 +59,7 @@ STL.prototype.mesh = function(name) {
   object.position.x = 0;
   object.position.y = 0;
   object.position.z = 0;
+  object.notes = { pos: this.pos, normal: this.normal, input: this.input };
   return object;
 };
 STL.prototype.floorMesh = function(name, image) {
@@ -101,7 +105,7 @@ Obstruction.prototype.STL = function(p, pos, normal) {
   var fp = function(h, t) {
     var f = surfaceBasisTransformer(
       formBasis(normal))(this.f);
-    return f(h, t).add(pos);
+    return f(h, t);
   }.bind(this);
   var ps = [];
   for( var i = 0; i <= p; i++ ) {
@@ -111,12 +115,13 @@ Obstruction.prototype.STL = function(p, pos, normal) {
     }
   }
 
-  var ts = [];
+  var ts = [], psp = [];
   for( var i = 1; i <= p; i++ ) {
     for( var j = 1; j <= p; j++ ) {
       var bb = ps[i][j],
           ba = ps[i][j-1],
 	  aa = ps[i-1][j-1];
+      [].push.apply(psp, [aa, ba, bb]);
       if( notEquals([aa, ba], [ba, bb], [aa, bb]) ) {
 	ts.push(new Tri(ba, aa, bb));
       }
@@ -127,13 +132,23 @@ Obstruction.prototype.STL = function(p, pos, normal) {
       var aa = ps[i][j],
           ab = ps[i][j+1],
 	  bb = ps[i+1][j+1];
+      [].push.apply(psp, [aa, ab, bb]);
       if( notEquals([aa, ab], [ab, bb], [aa, bb]) ) {
 	ts.push(new Tri(bb, aa, ab));
       }
     }
   }
 
-  return new STL(ts);
+  var center = psp.reduce(function(a, x) {
+    return a.clone().add(x)
+  }).multiplyScalar(1/psp.length);
+  ts = ts.map(function(t) {
+    t.vertices = t.vertices.map(function(v) {
+      return v.clone().add(pos.clone().sub(center));
+    });
+    return t;
+  });
+  return new STL(ts, pos, normal, this.input);
 };
 
 var Sphere = function(radius) {
