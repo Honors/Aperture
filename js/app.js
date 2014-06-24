@@ -192,7 +192,17 @@ var parseObstruction = function(line) {
     "CylinderV": Cylinder
   }[cols[0]])(size[0], size[1], size[2]);
   obs.position = new THREE.Vector3(pos[0], pos[1], pos[2]);
-  obs.normal = new THREE.Vector3(0, 0, 1);
+  if( cols[0].match(/H$/) ) {
+    obs.normal = new THREE.Vector3(0, 1, 0);
+    obs.type += "H";
+  } else {
+    obs.normal = new THREE.Vector3(0, 0, 1);
+  }
+  var y = new THREE.Vector3(0, 1, 0);
+  var incline = new THREE.Matrix4().makeRotationAxis( y, traits[0] );
+  var z = new THREE.Vector3(0, 0, 1);
+  var rotation = new THREE.Matrix4().makeRotationAxis( z, traits[1] );
+  obs.normal.applyMatrix4(incline).applyMatrix4(rotation);
   return obs;
 };
 var parse = function(x) {
