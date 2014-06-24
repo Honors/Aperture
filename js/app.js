@@ -75,7 +75,7 @@ var mutators = (function() {
 	object.visible = true;
 	object.active = true;
 	scene.getObjectByName(name).visible = true;
-	scene.getObjectByName(name).material = new THREE.MeshNormalMaterial();
+	scene.getObjectByName(name).material = object.material;
       } else {
 	object.visible = true;
 	object.active = false;
@@ -107,7 +107,8 @@ var mutators = (function() {
       position: center,
       type: type || recognizePrimitiveShape(object.ts),
       active: focus == "*",
-      visible: true });
+      visible: true,
+      material: object.material });
     var focalPoint = objects.map(
       function(x) {
         return x.position.clone();
@@ -169,11 +170,9 @@ controls.render();
 
 var setup = function() {
   var obstructions = parse(document.querySelector("[data-identifier='3dData']").innerText);
-  var floor = new Rectangle(45, 35, 0.2), 
-      img = document.querySelector("[data-identifier='3dImage']");
-  floor.position = new THREE.Vector3(0, 0, 0);
-  floor.normal = new THREE.Vector3(0, 0, 1);
-  scene.add(renderSTL(new FloorSTL(floor.STL(20, floor.position, floor.normal), img), "Floor", floor.type));
+  var img = document.querySelector("[data-identifier='3dImage']"),
+      floor = new Floor(45, 35, 0.2, img); 
+  scene.add(renderSTL(floor, "Floor", "Rectangle"));
   obstructions.forEach(function(o, i) {
     scene.add(renderSTL(o.STL(20, o.position, o.normal), o.type + " " + i, o.type));
   });

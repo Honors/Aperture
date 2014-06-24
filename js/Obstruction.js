@@ -17,8 +17,29 @@ var Tri = function(a, b, c) {
   this.normal = b.clone().sub(a).cross(b.clone().sub(c)).normalize();
 };
 
+function calculateUVs(geometry) {
+  for(var i = 0; i < Math.floor(geometry.faces.length / 2); i++) {
+    geometry.faceVertexUvs[ 0 ].push(
+      [
+	new THREE.Vector2( 0, 0 ),
+	new THREE.Vector2( 0, 1 ),
+	new THREE.Vector2( 1, 0 ),    
+      ] );
+    geometry.faces[ 2 * i ].materialIndex = i;
+    geometry.faceVertexUvs[ 0 ].push(
+      [
+	new THREE.Vector2( 0, 1 ),
+	new THREE.Vector2( 1, 1 ),
+	new THREE.Vector2( 1, 0 ),    
+      ] );
+    geometry.faces[ 2 * i + 1 ].materialIndex = i;
+  }
+  return geometry;
+}
+
 var STL = function(ts) {
   this.ts = ts;
+  this.material = new THREE.MeshNormalMaterial();
 };
 STL.prototype.mesh = function(name) {
   var geo = new THREE.Geometry();
@@ -29,7 +50,7 @@ STL.prototype.mesh = function(name) {
         t.normal));
   });
   var object = new THREE.Mesh(
-    geo, new THREE.MeshNormalMaterial());
+    geo, this.material);
   object.name = name;
   object.overdraw = true;
   object.position.x = 0;
@@ -49,8 +70,8 @@ STL.prototype.floorMesh = function(name, image) {
   texture.needsUpdate = true;
   // TODO: an image map cannot be applied to a custom shape without
   // defining UVs. Check the PLaneGeometry source.
-  // var material = new THREE.MeshBasicMaterial( { map : texture } ); 
-  var material = new THREE.MeshNormalMaterial(); 
+  geo = calculateUVs(geo, 6);
+  var material = new THREE.MeshBasicMaterial( { map : texture } ); 
   var object = new THREE.Mesh(geo, material);
   object.name = name;
   object.overdraw = true;
@@ -60,12 +81,17 @@ STL.prototype.floorMesh = function(name, image) {
   return object;
 };
 
-var FloorSTL = function(stl, img) {
-  this.ts = stl.ts;
-  this.img = img;
+var Floor = function(l, w, h, img) {
+  this.center = new THREE.Vector3(l/2, w/2, 0);
+  this.geo = new THREE.CubeGeometry(l, w, h);
+  this.material = new THREE.MeshBasicMaterial({ map: new THREE.Texture(img) })
+  this.material.map.needsUpdate = true;
 };
-FloorSTL.prototype.mesh = function(name) {
-  return STL.prototype.floorMesh.call(this, name, this.img);
+Floor.prototype.mesh = function(name) {
+  var mesh = new THREE.Mesh(this.geo, this.material);
+  mesh.position = this.center;
+  mesh.name = name;
+  return mesh;
 };
 
 var Obstruction = function(f) {
