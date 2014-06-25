@@ -47,8 +47,6 @@ var parseFireDetector = function(line) {
   obs.normal.applyMatrix4(incline).applyMatrix4(rotation);
   obs.input = { pos: pos, traits: traits };
 
-  obs.position.add(obs.normal.clone().multiplyScalar(50));
-
   return obs;
 };
 var parseFDs = ObstructionParser.parseFDs = function(x) {

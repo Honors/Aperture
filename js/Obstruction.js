@@ -86,14 +86,16 @@ STL.prototype.floorMesh = function(name, image) {
 };
 
 var Floor = function(l, w, h, img) {
-  this.center = new THREE.Vector3(l/2, w/2, 0);
+  this.center = new THREE.Vector3(l/2, w/2, 0.2/2);
   this.geo = new THREE.CubeGeometry(l, w, h);
   this.material = new THREE.MeshBasicMaterial({ map: new THREE.Texture(img) })
   this.material.map.needsUpdate = true;
+  this.elevation = 0;
 };
 Floor.prototype.mesh = function(name) {
   var mesh = new THREE.Mesh(this.geo, this.material);
-  mesh.position = this.center;
+  mesh.position = this.center.clone().add(
+    new THREE.Vector3(0, 0, this.elevation));
   mesh.name = name;
   return mesh;
 };
@@ -101,7 +103,7 @@ Floor.prototype.mesh = function(name) {
 var Obstruction = function(f) {
   this.f = f;
 };
-Obstruction.prototype.STL = function(p, pos, normal) {
+Obstruction.prototype.STL = function(p, pos, normal, hasAbsolutePosition) {
   var fp = function(h, t) {
     var f = surfaceBasisTransformer(
       formBasis(normal))(this.f);
@@ -144,6 +146,7 @@ Obstruction.prototype.STL = function(p, pos, normal) {
   }).multiplyScalar(1/psp.length);
   ts = ts.map(function(t) {
     t.vertices = t.vertices.map(function(v) {
+      if( hasAbsolutePosition ) return v.clone().add(pos);
       return v.clone().add(pos.clone().sub(center));
     });
     return t;
@@ -289,16 +292,9 @@ var FireDetector = function(height) {
 };
 FireDetector.prototype.STL = function() {
   var stl = Obstruction.prototype.STL.apply(this, arguments);
-  var ts = stl.ts.map(function(t) {
-    // TODO: understand why the order of vertices is different
-    // for the FireDetector surface than for others
-    t.vertices = [t.vertices[1], t.vertices[0], t.vertices[2]];
-    return t;
+  stl.material = new THREE.MeshBasicMaterial({
+    color: 0xff0000, transparent: true, opacity: 0.3
   });
-  var stl2 = new STL(ts, stl.pos, stl.normal, stl.input);
-  stl2.material = new THREE.MeshBasicMaterial({
-    color: 0xff0000, transparent: true, opacity: 0.5
-  });
-  return stl2;
+  return stl;
 };
 
