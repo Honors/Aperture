@@ -1,4 +1,8 @@
-var recognizePrimitiveShape = function(triangles, center) {
+var PrimitiveRecognizer = {};
+
+(function() {
+
+PrimitiveRecognizer.recognize = function(triangles, center) {
   // Find the unique directions in which facets point.
   var uniqueNormals = [], Epsilon = 0.01;
   var nearEqual = function(a, b) {
@@ -55,4 +59,6 @@ var recognizePrimitiveShape = function(triangles, center) {
     return "Unk";
   }
 };
+
+}());
 

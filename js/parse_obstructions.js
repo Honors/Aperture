@@ -1,3 +1,7 @@
+var ObstructionParser = {};
+
+(function() {
+
 var parseObstruction = function(line) {
   var cols = line.split(/\s+/),
       rest = cols.slice(2),
@@ -27,7 +31,7 @@ var parseObstruction = function(line) {
   obs.input = { pos: pos, size: size, traits: traits, shape: cols[0] };
   return obs;
 };
-var parseObstructions = function(x) {
+var parseObstructions = ObstructionParser.parse = function(x) {
   var lines = x.split("\n");
   return lines.filter(function(x) {
     return !x.match(/^\s*?$/);
@@ -35,4 +39,6 @@ var parseObstructions = function(x) {
     return parseObstruction(x.replace(/^\s+/, ''));
   });
 };
+
+}());
 

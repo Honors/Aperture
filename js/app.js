@@ -13,16 +13,9 @@ var controls = new Controls(renderer.render.bind(renderer), camera, scene, rende
 [].forEach.call(
   document.querySelectorAll("#visibleRange input"),
   function(range) {
-    range.addEventListener("input", renderFocus);
-    range.addEventListener("change", renderFocus);
+    range.addEventListener("input", ObjectManipulator.renderFocus);
+    range.addEventListener("change", ObjectManipulator.renderFocus);
   });
-var toggleClass = function(elm, cls) {
-  if( elm.className.indexOf(cls) == -1 ) {
-    elm.className += " " + cls;
-  } else {
-    elm.className = elm.className.replace(" " + cls, "");
-  }
-};
 document.querySelector("#collapse").addEventListener("click", function(evt) {
   evt.preventDefault();
   toggleClass(document.querySelector("#tools"), "collapsed");
@@ -42,12 +35,12 @@ var setup = function() {
         function(x) { 
 	  return parseFloat(x)
 	  });
-  var obstructions = parseObstructions(document.querySelector("[data-identifier='3dData']").innerText);
+  var obstructions = ObstructionParser.parse(document.querySelector("[data-identifier='3dData']").innerText);
   var img = document.querySelector("[data-identifier='3dImage']"),
       floor = new Floor(roomDimensions[0], roomDimensions[1], 0.2, img); 
-  scene.add(renderSTL(floor, "Floor", "Rectangle"));
+  scene.add(ObjectManipulator.renderSTL(floor, "Floor", "Rectangle"));
   obstructions.forEach(function(o, i) {
-    scene.add(renderSTL(o.STL(20, o.position, o.normal), o.name + suffix(o.name), o.desc));
+    scene.add(ObjectManipulator.renderSTL(o.STL(20, o.position, o.normal), o.name + suffix(o.name), o.desc));
   });
 };
 window.onload = setup;

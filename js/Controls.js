@@ -44,7 +44,7 @@ var Controls = function(render, camera, scene, elm) {
     var rect = elm.getBoundingClientRect(),
         x = evt.clientX - rect.left,
 	y = evt.clientY - rect.top;
-    enterSelectMode(isSelectMode,
+    ObjectManipulator.enterSelectMode(isSelectMode,
       [x/elm.offsetWidth, y/elm.offsetHeight]);
   };
   document.addEventListener('keydown', function(evt) {

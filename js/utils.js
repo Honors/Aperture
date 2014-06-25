@@ -232,4 +232,11 @@ var vEqual = function(a, b) {
   }
   return true;
 };
+var toggleClass = function(elm, cls) {
+  if( elm.className.indexOf(cls) == -1 ) {
+    elm.className += " " + cls;
+  } else {
+    elm.className = elm.className.replace(" " + cls, "");
+  }
+};
 
