@@ -49,7 +49,7 @@ var Controls = function(render, camera, scene, elm) {
   };
   document.addEventListener('keydown', function(evt) {
     if( evt.keyCode == 46 ) {
-      deleteSelection();
+      ObjectManipulator.deleteSelection();
     }
   });
   elm.addEventListener('mousedown', function(evt) {
