@@ -86,7 +86,7 @@ STL.prototype.floorMesh = function(name, image) {
 };
 
 var Floor = function(l, w, h, img) {
-  this.center = new THREE.Vector3(l/2, w/2, 0.2/2);
+  this.center = new THREE.Vector3(l/2, w/2, 0);
   this.geo = new THREE.CubeGeometry(l, w, h);
   this.material = new THREE.MeshBasicMaterial({ map: new THREE.Texture(img) })
   this.material.map.needsUpdate = true;
@@ -95,7 +95,7 @@ var Floor = function(l, w, h, img) {
 Floor.prototype.mesh = function(name) {
   var mesh = new THREE.Mesh(this.geo, this.material);
   mesh.position = this.center.clone().add(
-    new THREE.Vector3(0, 0, this.elevation));
+    new THREE.Vector3(0, 0, this.elevation - 0.1));
   mesh.name = name;
   return mesh;
 };

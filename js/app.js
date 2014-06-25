@@ -38,7 +38,7 @@ var setup = function() {
   var obstructions = ObstructionParser.parse(document.querySelector("[data-identifier='3dData']").innerText),
       fds = ObstructionParser.parseFDs(document.querySelector("[data-identifier='3dFDs']").innerText);
   var img = document.querySelector("[data-identifier='3dImage']"),
-      floor = new Floor(roomDimensions[0], roomDimensions[1], 0.2, img); 
+      floor = new Floor(roomDimensions[0], roomDimensions[1], 0.1, img); 
   floor.elevation = roomDimensions[3];
   scene.add(ObjectManipulator.renderSTL(floor, "Floor", "Rectangle"));
   obstructions.forEach(function(o, i) {
