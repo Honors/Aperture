@@ -266,3 +266,39 @@ var Rectangle = function(length, width, height) {
 };
 Rectangle.prototype = Obstruction.prototype;
 
+var FireDetector = function(height) {
+  this.type = "FireDetector";
+  this.desc = "FD";
+  this.f = function(h, theta) {
+    return piecewise([
+      { range: [0, 0.5], 
+	fn: function(h) {
+	  return revolvingParametric(
+	    vectorLine(0, 0, 105/210*height, 105/210*height))(h, theta);
+	} },
+      { range: [0.5, 1], 
+	fn: function(h) {
+	  var b = bezier([105/210*height, 105/210*height],
+	      [178/210*height, 153/210*height],
+	      [97/210*height, 210/210*height],
+	      [0/210*height, 207/210*height]);
+	  return revolvingParametric(b)(h, theta);
+        } }
+    ])(h);
+  };
+};
+FireDetector.prototype.STL = function() {
+  var stl = Obstruction.prototype.STL.apply(this, arguments);
+  var ts = stl.ts.map(function(t) {
+    // TODO: understand why the order of vertices is different
+    // for the FireDetector surface than for others
+    t.vertices = [t.vertices[1], t.vertices[0], t.vertices[2]];
+    return t;
+  });
+  var stl2 = new STL(ts, stl.pos, stl.normal, stl.input);
+  stl2.material = new THREE.MeshBasicMaterial({
+    color: 0xff0000, transparent: true, opacity: 0.5
+  });
+  return stl2;
+};
+
