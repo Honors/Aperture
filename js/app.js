@@ -26,7 +26,7 @@ controls.render();
 var names = {};
 var suffix = function(name) {
   names[name] = (names[name]||0) + 1;
-  return " " + names[name];
+  return names[name] == 1 ? "" : " " + names[name];
 };
 var setup = function() {
   var roomDimensions = document.querySelector(
