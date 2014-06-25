@@ -96,4 +96,7 @@ body {
 #extras, #content {
   float: left;
 }
+[type=range] {
+  width: 140px;
+}
 

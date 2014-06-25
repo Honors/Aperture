@@ -32,7 +32,7 @@ var parseObstruction = function(line) {
   return obs;
 };
 var parseObstructions = ObstructionParser.parse = function(x) {
-  var lines = x.split("\n");
+  var lines = x.split("||");
   return lines.filter(function(x) {
     return !x.match(/^\s*?$/);
   }).map(function(x) {
