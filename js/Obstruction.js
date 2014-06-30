@@ -37,9 +37,9 @@ function calculateUVs(geometry) {
   return geometry;
 }
 
-var STL = function(ts, pos, normal, input) {
+var STL = function(ts, pos, basis, input) {
   this.pos = pos;
-  this.normal = normal;
+  this.normal = basis[0];
   this.input = input;
   this.ts = ts;
   this.material = new THREE.MeshNormalMaterial();
@@ -103,8 +103,7 @@ Floor.prototype.mesh = function(name) {
 var Obstruction = function(f) {
   this.f = f;
 };
-Obstruction.prototype.STL = function(p, pos, normal, hasAbsolutePosition) {
-  var basis = formBasis(normal.clone().normalize()); 
+Obstruction.prototype.STL = function(p, pos, basis, hasAbsolutePosition) {
   var fp = function(h, t) {
     var f = surfaceBasisTransformer(basis)(this.f);
     return f(h, t);
@@ -151,7 +150,7 @@ Obstruction.prototype.STL = function(p, pos, normal, hasAbsolutePosition) {
     });
     return t;
   });
-  return new STL(ts, pos, normal, this.input);
+  return new STL(ts, pos, basis, this.input);
 };
 
 var Sphere = function(radius) {

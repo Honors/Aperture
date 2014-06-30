@@ -27,7 +27,10 @@ var parseObstruction = function(line) {
   var rotation = new THREE.Matrix4().makeRotationAxis( z, traits[1] );
   var y = new THREE.Vector3(0, 1, 0);
   var incline = new THREE.Matrix4().makeRotationAxis( y, traits[0] );
-  obs.normal.applyMatrix4(rotation).applyMatrix4(incline);
+  obs.basis = formBasis(obs.normal);
+  obs.basis.forEach(function(i) {
+    i.applyMatrix4(rotation).applyMatrix4(incline);
+  });
   obs.input = { pos: pos, size: size, traits: traits, shape: cols[0] };
   return obs;
 };
@@ -47,6 +50,7 @@ var parseFireDetector = function(line) {
   var y = new THREE.Vector3(0, 1, 0);
   var incline = new THREE.Matrix4().makeRotationAxis( y, -traits[1] );
   obs.normal.applyMatrix4(incline).applyMatrix4(rotation);
+  obs.basis = formBasis(obs.normal);
   obs.input = { pos: pos, traits: traits };
 
   return obs;
@@ -57,6 +61,7 @@ var parseGasDetector = function(line) {
       radius = parseFloat(cols[3]);
   var obs = new GasDetector(radius);
   obs.normal = new THREE.Vector3(1, 0, 0);
+  obs.basis = formBasis(obs.normal);
   obs.position = new THREE.Vector3(pos[0], pos[1], pos[2]);
   obs.name = "GasD";
   return obs;
