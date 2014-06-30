@@ -33,12 +33,14 @@ var parseObstruction = function(line) {
 };
 var parseFireDetector = function(line) {
   var cols = line.split(/\s+/g),
-      pos = cols.slice(0, 3).map(function(x) { return parseFloat(x); }),
-      traits = cols.slice(3, 5).map(function(x) { return parseFloat(x) * Math.PI/180; });
+      name = cols[0],
+      rest = cols.slice(1),
+      pos = rest.slice(0, 3).map(function(x) { return parseFloat(x); }),
+      traits = rest.slice(3, 5).map(function(x) { return parseFloat(x) * Math.PI/180; });
   var obs = new FireDetector(100);
   obs.normal = new THREE.Vector3(1, 0, 0);
   obs.position = new THREE.Vector3(pos[0], pos[1], pos[2]);
-  obs.name = "FD";
+  obs.name = name;
 
   var z = new THREE.Vector3(0, 0, 1);
   var rotation = new THREE.Matrix4().makeRotationAxis( z, traits[0] );

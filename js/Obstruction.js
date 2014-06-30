@@ -104,9 +104,9 @@ var Obstruction = function(f) {
   this.f = f;
 };
 Obstruction.prototype.STL = function(p, pos, normal, hasAbsolutePosition) {
+  var basis = formBasis(normal.clone().normalize()); 
   var fp = function(h, t) {
-    var f = surfaceBasisTransformer(
-      formBasis(normal))(this.f);
+    var f = surfaceBasisTransformer(basis)(this.f);
     return f(h, t);
   }.bind(this);
   var ps = [];
@@ -198,7 +198,7 @@ var Vessel = function(radius, height) {
       { range: [0, 0.25],
 	fn: function(h) {
 	  var r = radius * sqrt(1 - _2(1-h));
-	  return new THREE.Vector2(r, h*radius-height);
+	  return new THREE.Vector2(r, -radius*(1-h));
 	} },
       { range: [0.25, 0.75],
 	fn: function(h) {
@@ -208,7 +208,7 @@ var Vessel = function(radius, height) {
       { range: [0.75, 1],
 	fn: function(h) {
 	  var r = radius * sqrt(1 - _2(h));
-	  return new THREE.Vector2(r, height+h*radius);
+	  return new THREE.Vector2(r, height+radius*h);
 	} }
     ]));
 };
