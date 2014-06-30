@@ -298,3 +298,14 @@ FireDetector.prototype.STL = function() {
   return stl;
 };
 
+var GasDetector = function() {
+  Sphere.apply(this, arguments)
+};
+GasDetector.prototype.STL = function() {
+  var stl = Obstruction.prototype.STL.apply(this, arguments);
+  stl.material = new THREE.MeshBasicMaterial({
+    color: 0xbada55, transparent: true, opacity: 0.3
+  });
+  return stl;
+};
+

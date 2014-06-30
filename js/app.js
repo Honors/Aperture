@@ -36,16 +36,14 @@ var setup = function() {
 	  return parseFloat(x)
 	  });
   var obstructions = ObstructionParser.parse(document.querySelector("[data-identifier='3dData']").innerText),
-      fds = ObstructionParser.parseFDs(document.querySelector("[data-identifier='3dFDs']").innerText);
+      fds = ObstructionParser.parseFDs(document.querySelector("[data-identifier='3dFDs']").innerText),
+      gases = ObstructionParser.parseGases(document.querySelector("[data-identifier='3dGas']").innerText);
   var img = document.querySelector("[data-identifier='3dImage']"),
       floor = new Floor(roomDimensions[0], roomDimensions[1], 0.1, img); 
   floor.elevation = roomDimensions[3];
   scene.add(ObjectManipulator.renderSTL(floor, "Floor", "Rectangle"));
-  obstructions.forEach(function(o, i) {
+  obstructions.concat(fds).concat(gases).forEach(function(o, i) {
     scene.add(ObjectManipulator.renderSTL(o.STL(20, o.position, o.normal), o.name + suffix(o.name), o.desc));
-  });
-  fds.forEach(function(fd, i) {
-    scene.add(ObjectManipulator.renderSTL(fd.STL(20, fd.position, fd.normal, true), fd.name + suffix(fd.name), fd.desc));
   });
 };
 window.onload = setup;

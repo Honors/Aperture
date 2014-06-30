@@ -49,22 +49,29 @@ var parseFireDetector = function(line) {
 
   return obs;
 };
-var parseFDs = ObstructionParser.parseFDs = function(x) {
-  var lines = x.split("||");
-  return lines.filter(function(x) {
-    return !x.match(/^\s*?$/);
-  }).map(function(x) {
-    return parseFireDetector(x.replace(/^\s+/, ''));
-  });
+var parseGasDetector = function(line) {
+  var cols = line.split(/\s+/g),
+      pos = cols.slice(0, 3).map(function(x) { return parseFloat(x); }),
+      radius = parseFloat(cols[3]);
+  var obs = new GasDetector(radius);
+  obs.normal = new THREE.Vector3(1, 0, 0);
+  obs.position = new THREE.Vector3(pos[0], pos[1], pos[2]);
+  obs.name = "GasD";
+  return obs;
 };
-var parseObstructions = ObstructionParser.parse = function(x) {
-  var lines = x.split("||");
-  return lines.filter(function(x) {
-    return !x.match(/^\s*?$/);
-  }).map(function(x) {
-    return parseObstruction(x.replace(/^\s+/, ''));
-  });
+var parseList = function(parseItem) {
+  return function(x) {
+    var lines = x.split("||");
+    return lines.filter(function(x) {
+      return !x.match(/^\s*?$/);
+    }).map(function(x) {
+      return parseItem(x.replace(/^\s+/, ''));
+    });
+  };
 };
+var parseGases = ObstructionParser.parseGases = parseList(parseGasDetector);
+var parseFDs = ObstructionParser.parseFDs = parseList(parseFireDetector);
+var parseObstructions = ObstructionParser.parse = parseList(parseObstruction);
 
 }());
 
