@@ -36,11 +36,11 @@ var parseObstruction = function(line) {
 };
 var parseFireDetector = function(line) {
   var cols = line.split(/\s+/g),
-      name = cols[0],
-      rest = cols.slice(1),
+      name = cols[0], size = [cols[1]],
+      rest = cols.slice(2),
       pos = rest.slice(0, 3).map(function(x) { return parseFloat(x); }),
       traits = rest.slice(3, 5).map(function(x) { return parseFloat(x) * Math.PI/180; });
-  var obs = new FireDetector(100);
+  var obs = new FireDetector(traits[2]);
   obs.normal = new THREE.Vector3(1, 0, 0);
   obs.position = new THREE.Vector3(pos[0], pos[1], pos[2]);
   obs.name = name;
@@ -57,8 +57,9 @@ var parseFireDetector = function(line) {
 };
 var parseGasDetector = function(line) {
   var cols = line.split(/\s+/g),
-      pos = cols.slice(0, 3).map(function(x) { return parseFloat(x); }),
-      radius = parseFloat(cols[3]);
+      name = cols[0], size = cols[1],
+      pos = cols.slice(2, 5).map(function(x) { return parseFloat(x); }),
+      radius = parseFloat(cols[5]);
   var obs = new GasDetector(radius);
   obs.normal = new THREE.Vector3(1, 0, 0);
   obs.basis = formBasis(obs.normal);

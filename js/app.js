@@ -31,6 +31,34 @@ var suffix = function(name) {
   return names[name] == 1 ? "" : " " + names[name];
 };
 var setup = function() {
+  var mapSelect = document.querySelector("#mapSelect");
+  ["Fire Geo", "Gas Geo", "Fire Geo Risk", "Fire Res Risk", "Gas Geo Risk", "Gas Res Risk"].forEach(function(x) {
+    var option = document.createElement("option");
+    option.innerText = x;
+    mapSelect.appendChild(option);
+  });
+  mapSelect.addEventListener("change", function(evt) {
+    var xhr = new XMLHttpRequest();
+    xhr.onload = function() {
+      console.log(xhr.responseText);
+      var floor = scene.children.filter(function(x) {
+        return x.name == "Floor"
+	})[0];
+      var loaded = false;
+      img.onload = function() {
+        if( loaded ) return;
+	loaded = true;
+	floor.material = new THREE.MeshBasicMaterial({ map: new THREE.Texture(img) });
+	floor.material.map.needsUpdate = true;
+      };
+      img.src = img.src.split("?")[0] + "?random=" + Math.floor(Math.random()*1e6);
+      controls.render();
+    };
+    xhr.open("POST", "/Effigy/View.aspx");
+    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    xhr.send("mapType=" + this.value.replace(/\s/g, "%20"));
+  });
+
   var roomDimensions = document.querySelector(
     "[data-identifier='3dRoom']").innerText.match(
       /\[([^\]]+)\]/)[1].split(" ").map(
