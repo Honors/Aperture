@@ -66,8 +66,18 @@ var renderFocus = ObjectManipulator.renderFocus = function(f) {
     } else if( name == focus || focus == "*" ) {
       object.visible = true;
       object.active = true;
-      scene.getObjectByName(name).visible = true;
-      scene.getObjectByName(name).material = object.material;
+      var sceneObject = scene.getObjectByName(name);
+      sceneObject.visible = true;
+      sceneObject.material = object.material;
+      if( name == focus && sceneObject.notes ) {
+	var pos = sceneObject.notes.input.pos,
+	    size = sceneObject.notes.input.size,
+	    traits = sceneObject.notes.input.traits,
+	    type = sceneObject.notes.input.shape;
+	var sizeDesc = type == "Rectangle" ? size.join("x") : size[1] + "@" + size[0];
+	var traitDesc = "inclination: " + (traits[0]/Math.PI * 180 | 0) + ", rotation: " + (traits[1]/Math.PI * 180 | 0);
+        document.querySelector(".statusBar").innerText = "position: (" + pos.join(", ") + "), size: " + sizeDesc + ", " + traitDesc;
+      }
     } else {
       object.visible = true;
       object.active = false;

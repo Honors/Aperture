@@ -99,4 +99,16 @@ body {
 [type=range] {
   width: 140px;
 }
+.sceneWrapper {
+  position: relative;
+}
+.statusBar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  color: white;
+  padding: 5px;
+  box-sizing: border-box;
+  width: 100%;
+}
 
