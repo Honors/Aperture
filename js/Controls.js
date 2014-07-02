@@ -96,7 +96,13 @@ var Controls = function(render, camera, scene, elm) {
       this.zoom(y);
     } else {
       // panning
-      this.focalPoint.add(new THREE.Vector3(x/6, -y/6, 0));
+      var lv = this.lookingVector();
+      var sx = lv.x > 0 ? 1 : -1;
+      var sy = lv.y > 0 ? 1 : -1;
+      if( abs(lv.x) > abs(lv.y) ) {
+        var z = x; x = y; y = z;
+      }
+      this.focalPoint.add(new THREE.Vector3(sx * x/6, sy * y/6, 0));
     }
   }.bind(this));
   [].map.call(

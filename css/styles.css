@@ -12,7 +12,7 @@ body {
   .block span {
     font-weight: bold;
   }
-#tools.collapsed .block, #tools.collapsed ul {
+#tools.collapsed .block, #tools.collapsed ul, #tools.collapsed select {
   display: none;
 }
 #tools.collapsed {
