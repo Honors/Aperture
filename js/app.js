@@ -73,7 +73,9 @@ var setup = function() {
   floor.elevation = roomDimensions[3];
   scene.add(ObjectManipulator.renderSTL(floor, "Floor", "Rectangle"));
   obstructions.concat(fds).concat(gases).forEach(function(o, i) {
-    scene.add(ObjectManipulator.renderSTL(o.STL(20, o.position, o.basis), o.name + suffix(o.name), o.desc));
+    scene.add(ObjectManipulator.renderSTL(
+      o.STL(20, o.position, o.basis, o.type == "FireDetector"),
+      o.name + suffix(o.name), o.desc));
   });
 };
 window.onload = setup;

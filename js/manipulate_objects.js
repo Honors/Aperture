@@ -74,7 +74,11 @@ var renderFocus = ObjectManipulator.renderFocus = function(f) {
 	    size = sceneObject.notes.input.size,
 	    traits = sceneObject.notes.input.traits,
 	    type = sceneObject.notes.input.shape;
-	var sizeDesc = type == "Rectangle" ? size.join("x") : size[1] + "@" + size[0];
+	var sizeDesc = type == "Rectangle" ?
+	  size.join("x") :
+	  (type.match(/Detector$/) ?
+	   size[0] :
+	   size[1] + "@" + size[0]);
 	var traitDesc = "inclination: " + (traits[0]/Math.PI * 180 | 0) + ", rotation: " + (traits[1]/Math.PI * 180 | 0);
         document.querySelector(".statusBar").innerText = "position: (" + pos.join(", ") + "), size: " + sizeDesc + ", " + traitDesc;
       }
