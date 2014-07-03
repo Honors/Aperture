@@ -28,6 +28,9 @@ var parseObstruction = function(line) {
   var y = new THREE.Vector3(0, 1, 0);
   var incline = new THREE.Matrix4().makeRotationAxis( y, traits[0] );
   obs.basis = formBasis(obs.normal);
+  if( cols[0].match(/H$/) ) {
+    var t = rotation; rotation = incline; incline = t;
+  }
   obs.basis.forEach(function(i) {
     i.applyMatrix4(rotation).applyMatrix4(incline);
   });

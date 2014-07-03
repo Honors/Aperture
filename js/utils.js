@@ -113,6 +113,11 @@ var drawVector = function(pos, v) {
   var material = new THREE.LineBasicMaterial({ color: 0xff0000 });
   return new THREE.Line(geometry, material);
 };
+var drawBasis = function(pos, basis, size) {
+  return basis.map(function(x) {
+     return drawVector(pos, x.multiplyScalar(size));
+   });
+};
 var drawVectorLine = function(pos, to) {
   var geometry = new THREE.Geometry();
   geometry.vertices.push(pos);

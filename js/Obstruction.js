@@ -322,7 +322,7 @@ var GasDetector = function() {
 GasDetector.prototype.STL = function() {
   var stl = Obstruction.prototype.STL.apply(this, arguments);
   stl.material = new THREE.MeshBasicMaterial({
-    color: 0xbada55, transparent: true, opacity: 0.3
+    color: 0xbada55, transparent: true, opacity: 0.6
   });
   return stl;
 };
