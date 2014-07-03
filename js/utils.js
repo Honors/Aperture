@@ -102,7 +102,7 @@ var drawLine = function(d, to) {
   var geometry = new THREE.Geometry();
   geometry.vertices.push(new THREE.Vector3(0, 0, 0));
   geometry.vertices.push(to);
-  var colors = [0xff0000, 0x00ff00, 0x0000ff];
+  var colors = [0xff0000, 0x00ff00, 0x0000ff, 0xffffff];
   var material = new THREE.LineBasicMaterial({ color: colors[d] });
   return new THREE.Line(geometry, material);
 };

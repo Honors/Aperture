@@ -1,6 +1,7 @@
 var mode = { rotate: true };
-var Controls = function(render, camera, scene, elm) {
+var Controls = function(render, camera, scene, elm, axisScene, immutable) {
   this.sceneRender = render;
+  this.axisScene = axisScene;
   this.focalPoint = new THREE.Vector3(0,0,0);
   this.rotationVector = new THREE.Vector3(1, 0, 0);
   this.basis = [
@@ -8,6 +9,11 @@ var Controls = function(render, camera, scene, elm) {
     new THREE.Vector3(0, 1, 0),
     new THREE.Vector3(0, 0, 1)
   ];
+  var addEventListener = function(elm, evt, f) {
+    if( !immutable ) {
+      document.addEventListener.call(elm, evt, f);
+    }
+  };
   this.upVector = function() { return this.basis[2].clone(); };
   this.lookingVector = function(update) {
     if( update ) {
@@ -47,35 +53,35 @@ var Controls = function(render, camera, scene, elm) {
     ObjectManipulator.enterSelectMode(isSelectMode,
       [x/elm.offsetWidth, y/elm.offsetHeight]);
   };
-  document.addEventListener('keydown', function(evt) {
+  addEventListener(document, 'keydown', function(evt) {
     if( evt.keyCode == 46 ) {
       ObjectManipulator.deleteSelection();
     }
   });
-  elm.addEventListener('mousedown', function(evt) {
+  addEventListener(elm, 'mousedown', function(evt) {
     if( evt.which == 3 ) selectMode(true, evt);
     else {
       start = [evt.x, evt.y];
       this.panning = mode.pan;
     }
   }.bind(this));
-  elm.addEventListener('mouseup', function(evt) {
+  addEventListener(elm, 'mouseup', function(evt) {
     if( evt.which == 3 ) selectMode(false, evt);
     else start = undefined;
     this.panning = false;
   }.bind(this));
-  elm.addEventListener('contextmenu', function(evt) {
+  addEventListener(elm, 'contextmenu', function(evt) {
     evt.preventDefault();
   }.bind(this));
  
   this.zoom = function(delta) {
     this._position.add(this.lookingVector().clone().multiplyScalar(-delta));
   };
-  elm.addEventListener('mousewheel', function(evt) {
+  addEventListener(elm, 'mousewheel', function(evt) {
     evt.preventDefault();
     this.zoom(evt.wheelDelta/5);
   }.bind(this));
-  elm.addEventListener('mousemove', function(evt) {
+  addEventListener(elm, 'mousemove', function(evt) {
     if( evt.which == 3 ) selectMode(isSelectMode, evt);
 
     if( !start ) return;
@@ -108,7 +114,7 @@ var Controls = function(render, camera, scene, elm) {
   [].map.call(
     document.querySelectorAll("#modes li a"), 
     function(elm, i, coll) {
-      elm.addEventListener('click', function(evt) {
+      addEventListener(elm, 'click', function(evt) {
 	evt.preventDefault();
 	mode.rotate = elm.id == "rotate_mode";
 	mode.pan = elm.id == "pan_mode";
@@ -122,7 +128,7 @@ var Controls = function(render, camera, scene, elm) {
   [].map.call(
     document.querySelectorAll("#views li a"), 
     function(elm) {
-      elm.addEventListener('click', function(evt) {
+      addEventListener(elm, 'click', function(evt) {
 	evt.preventDefault();
 	var face = parseInt(elm.id.split('').pop(), 10);
 	this.face(face);
@@ -149,4 +155,25 @@ Controls.prototype.render = function() {
   this.camera.lookAt(this.position().clone().add(this.lookingVector().clone().multiplyScalar(10)));
   this.sceneRender(this.scene, this.camera);
   requestAnimationFrame(this.render.bind(this));
+  if( this.axisScene ) {
+    var lv = this.lookingVector();
+    this.axisScene.children.forEach(function(o) {
+      axisScene.remove(o);
+    });
+    var circle = function() {
+      var mesh = new THREE.Line(
+	new THREE.CircleGeometry(30, 30),
+	new THREE.LineDashedMaterial({
+	  color: 0xffffff, dashSize: 3, gapSize: 7
+	}));
+      mesh.geometry.computeLineDistances();
+      return mesh;
+    };
+    this.axisScene.add(circle());
+    var xCircle = circle();
+    xCircle.rotation.x = Math.PI/2;
+    this.axisScene.add(xCircle);
+    this.axisScene.add(drawLine(
+      0, lv.clone().multiplyScalar(30)));
+  }
 };

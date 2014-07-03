@@ -3,6 +3,13 @@ body {
   padding: 0;
   width: 100%;
 }
+.axis-canvas {
+  width: 100px;
+  height: 100px;
+  position: absolute;
+  bottom: 10px;
+  left: 0;
+}
 .three-js {
   height: 600px;
 }

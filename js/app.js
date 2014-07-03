@@ -7,10 +7,24 @@ document.querySelector(".sceneWrapper").insertBefore(
   renderer.domElement,
   document.querySelector(".statusBar"));
 
+var axisRenderer = new THREE.WebGLRenderer();
+axisRenderer.setSize(100, 100);
+axisRenderer.domElement.className = "axis-canvas";
+document.querySelector(".sceneWrapper").insertBefore(
+  axisRenderer.domElement,
+  document.querySelector(".statusBar"));
+var axisScene = new THREE.Scene();
+var axisCamera = new THREE.PerspectiveCamera(45, axisRenderer.domElement.offsetWidth/axisRenderer.domElement.offsetHeight, 1, 6000);
+axisScene.camera = axisCamera;
+var axisControls = new Controls(axisRenderer.render.bind(axisRenderer), axisCamera, axisScene, axisRenderer.domElement, null, true);
+axisControls._position = new THREE.Vector3(-100, -50, 25);
+axisControls.rotationVector = new THREE.Vector3(1, 0.5, -0.25).normalize();
+axisControls.render();
+
 var camera = new THREE.PerspectiveCamera(45, renderer.domElement.offsetWidth/renderer.domElement.offsetHeight, 1, 6000);
 
 var scene = new THREE.Scene();
-var controls = new Controls(renderer.render.bind(renderer), camera, scene, renderer.domElement);
+var controls = new Controls(renderer.render.bind(renderer), camera, scene, renderer.domElement, axisScene);
 
 [].forEach.call(
   document.querySelectorAll("#visibleRange input"),
