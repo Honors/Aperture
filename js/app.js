@@ -15,10 +15,10 @@ document.querySelector(".sceneWrapper").insertBefore(
   document.querySelector(".statusBar"));
 var axisScene = new THREE.Scene();
 var axisCamera = new THREE.PerspectiveCamera(45, axisRenderer.domElement.offsetWidth/axisRenderer.domElement.offsetHeight, 1, 6000);
-axisScene.camera = axisCamera;
 var axisControls = new Controls(axisRenderer.render.bind(axisRenderer), axisCamera, axisScene, axisRenderer.domElement, null, true);
-axisControls._position = new THREE.Vector3(-100, -50, 25);
-axisControls.rotationVector = new THREE.Vector3(1, 0.5, -0.25).normalize();
+axisScene.controls = axisControls;
+axisControls._position = new THREE.Vector3(-100, 0, 0);
+axisControls.rotationVector = new THREE.Vector3(1, 0, 0);
 axisControls.render();
 
 var camera = new THREE.PerspectiveCamera(45, renderer.domElement.offsetWidth/renderer.domElement.offsetHeight, 1, 6000);

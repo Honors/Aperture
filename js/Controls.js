@@ -169,11 +169,12 @@ Controls.prototype.render = function() {
       mesh.geometry.computeLineDistances();
       return mesh;
     };
-    this.axisScene.add(circle());
-    var xCircle = circle();
-    xCircle.rotation.x = Math.PI/2;
-    this.axisScene.add(xCircle);
-    this.axisScene.add(drawLine(
-      0, lv.clone().multiplyScalar(30)));
+    var x = new THREE.Vector3(1, 0, 0);
+    this.axisScene.controls.rotationVector = this.lookingVector();
+    this.axisScene.controls._position = this.lookingVector().normalize().multiplyScalar(-100);
+    formBasis(x).forEach(function(v, i) {
+      this.axisScene.add(drawLine(
+	i, v.clone().multiplyScalar(30)));
+    });
   }
 };
