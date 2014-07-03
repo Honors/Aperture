@@ -8,10 +8,22 @@ document.querySelector(".sceneWrapper").insertBefore(
   document.querySelector(".statusBar"));
 
 var axisRenderer = new THREE.WebGLRenderer();
+axisRenderer.setClearColor(0xcccccc, 0);
 axisRenderer.setSize(100, 100);
 axisRenderer.domElement.className = "axis-canvas";
 document.querySelector(".sceneWrapper").insertBefore(
   axisRenderer.domElement,
+  document.querySelector(".statusBar"));
+var axisLabel = document.createElement("span");
+axisLabel.className = "axis-label";
+["x", "y", "z"].forEach(function(x, i) {
+  var span = document.createElement("span");
+  span.innerText = x;
+  span.className = "axis-"+i;
+  axisLabel.appendChild(span);
+});
+document.querySelector(".sceneWrapper").insertBefore(
+  axisLabel,
   document.querySelector(".statusBar"));
 var axisScene = new THREE.Scene();
 var axisCamera = new THREE.PerspectiveCamera(45, axisRenderer.domElement.offsetWidth/axisRenderer.domElement.offsetHeight, 1, 6000);

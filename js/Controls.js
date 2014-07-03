@@ -151,6 +151,9 @@ Controls.prototype.render = function() {
   }
 
   this.camera.position = this.position();
+  document.querySelector(".statusBar .camera").innerText = "(" + ["x", "y", "z"].map(function(k) {
+    return Math.round(this.camera.position[k]);
+  }.bind(this)).join(", ") + ")";
   this.camera.up = this.upVector();
   this.camera.lookAt(this.position().clone().add(this.lookingVector().clone().multiplyScalar(10)));
   this.sceneRender(this.scene, this.camera);

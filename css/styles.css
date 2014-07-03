@@ -7,8 +7,8 @@ body {
   width: 100px;
   height: 100px;
   position: absolute;
-  bottom: 10px;
-  left: 0;
+  bottom: 30px;
+  left: 5px;
 }
 .three-js {
   height: 600px;
@@ -117,5 +117,33 @@ body {
   padding: 5px;
   box-sizing: border-box;
   width: 100%;
+  background: #000;
+}
+.statusBar .selection {
+  float: left;
+}
+.statusBar .camera {
+  float: right;
+}
+.axis-label {
+  position: absolute;
+  left: 10px;
+  bottom: 34px;
+  color: white;
+}
+.axis-label span:after {
+  content: ', ';
+}
+.axis-label span:last-of-type:after {
+  content: '';
+}
+.axis-0 {
+  color: red;
+}
+.axis-1 {
+  color: blue;
+}
+.axis-2 {
+  color: green;
 }
 

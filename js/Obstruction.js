@@ -270,7 +270,7 @@ Rectangle.prototype = Obstruction.prototype;
 
 var Walls = function() {
   Rectangle.apply(this, arguments);
-  this.material = new THREE.MeshBasicMaterial({ color: 0xffffff, side: THREE.BackSide });
+  this.material = new THREE.MeshBasicMaterial({ color: 0xcccccc, side: THREE.BackSide });
 };
 Walls.prototype.STL = function() {
   var stl = Rectangle.prototype.STL.call(
@@ -279,7 +279,8 @@ Walls.prototype.STL = function() {
     formBasis(new THREE.Vector3(0, 0, 1)),
     true);
   stl.ts = stl.ts.filter(function(t) {
-    return t.normal.dot(new THREE.Vector3(0, 0, 1)) != 1;
+    return t.normal.dot(new THREE.Vector3(0, 0, 1)) != 1 ||
+      t.vertices[0].z == 0;
   });
   stl.material = this.material;
   stl.wireframe = true;

@@ -80,7 +80,9 @@ var renderFocus = ObjectManipulator.renderFocus = function(f) {
 	   size[0] :
 	   size[1] + "@" + size[0]);
 	var traitDesc = "inclination: " + (traits[0]/Math.PI * 180 | 0) + ", rotation: " + (traits[1]/Math.PI * 180 | 0);
-        document.querySelector(".statusBar").innerText = "position: (" + pos.join(", ") + "), size: " + sizeDesc + ", " + traitDesc;
+        document.querySelector(".statusBar .selection").innerText = "position: (" + pos.join(", ") + "), size: " + sizeDesc + ", " + traitDesc;
+      } else {
+        document.querySelector(".statusBar .selection").innerText = "";
       }
     } else {
       object.visible = true;
