@@ -69,7 +69,7 @@ var renderFocus = ObjectManipulator.renderFocus = function(f) {
       var sceneObject = scene.getObjectByName(name);
       sceneObject.visible = true;
       sceneObject.material = object.material;
-      if( name == focus && sceneObject.notes ) {
+      if( name == focus && sceneObject.notes && sceneObject.notes.input ) {
 	var pos = sceneObject.notes.input.pos,
 	    size = sceneObject.notes.input.size,
 	    traits = sceneObject.notes.input.traits,
@@ -95,6 +95,7 @@ var renderFocus = ObjectManipulator.renderFocus = function(f) {
 };
 var renderSTL = ObjectManipulator.renderSTL = function(object, name, type) {
   var mesh = object.mesh(name);
+  mesh.doubleSided = false;
   scene.add(mesh);
 
   var allVs = mesh.geometry.vertices;
@@ -137,7 +138,9 @@ var enterSelectMode = ObjectManipulator.enterSelectMode = function(x, pos) {
   var projector = new THREE.Projector();
   projector.unprojectVector(vector, camera);
   var raycaster = new THREE.Raycaster(camera.position, vector.sub(camera.position).normalize());
-  var intersects = raycaster.intersectObjects(objs);
+  var intersects = raycaster.intersectObjects(objs).filter(function(x) {
+    return x.object.name != "Walls";
+  });
   if( intersects.length ) {
     selection = intersects[0].object.name;
   }

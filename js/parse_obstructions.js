@@ -39,8 +39,9 @@ var parseFireDetector = function(line) {
       name = cols[0], size = [cols[1]],
       rest = cols.slice(2),
       pos = rest.slice(0, 3).map(function(x) { return parseFloat(x); }),
-      traits = rest.slice(3, 6).map(function(x) { return parseFloat(x) * Math.PI/180; });
-  var obs = new FireDetector(traits[2]);
+      traits = rest.slice(3, 5).map(function(x) { return parseFloat(x) * Math.PI/180; }),
+      size = rest[5];
+  var obs = new FireDetector(size);
   obs.normal = new THREE.Vector3(1, 0, 0);
   obs.position = new THREE.Vector3(pos[0], pos[1], pos[2]);
   obs.name = name;
@@ -54,7 +55,7 @@ var parseFireDetector = function(line) {
   obs.input = {
     pos: pos,
     traits: traits,
-    size: [traits[2]],
+    size: [size],
     shape: "FireDetector"
     };
 

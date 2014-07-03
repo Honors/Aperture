@@ -40,7 +40,6 @@ var setup = function() {
   mapSelect.addEventListener("change", function(evt) {
     var xhr = new XMLHttpRequest();
     xhr.onload = function() {
-      console.log(xhr.responseText);
       var floor = scene.children.filter(function(x) {
         return x.name == "Floor"
 	})[0];
@@ -72,10 +71,12 @@ var setup = function() {
       floor = new Floor(roomDimensions[0], roomDimensions[1], 0.1, img); 
   floor.elevation = roomDimensions[3];
   scene.add(ObjectManipulator.renderSTL(floor, "Floor", "Rectangle"));
+  var walls = new Walls(roomDimensions[0], roomDimensions[1], roomDimensions[2]);
+  var wallMesh = ObjectManipulator.renderSTL(walls.STL(), "Walls", "Rectangle"); 
   obstructions.concat(fds).concat(gases).forEach(function(o, i) {
-    scene.add(ObjectManipulator.renderSTL(
+    ObjectManipulator.renderSTL(
       o.STL(20, o.position, o.basis, o.type == "FireDetector"),
-      o.name + suffix(o.name), o.desc));
+      o.name + suffix(o.name), o.desc);
   });
 };
 window.onload = setup;

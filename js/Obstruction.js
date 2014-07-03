@@ -268,6 +268,24 @@ var Rectangle = function(length, width, height) {
 };
 Rectangle.prototype = Obstruction.prototype;
 
+var Walls = function() {
+  Rectangle.apply(this, arguments);
+  this.material = new THREE.MeshBasicMaterial({ color: 0xffffff, side: THREE.BackSide });
+};
+Walls.prototype.STL = function() {
+  var stl = Rectangle.prototype.STL.call(
+    this, 20,
+    new THREE.Vector3(0, 0, 0),
+    formBasis(new THREE.Vector3(0, 0, 1)),
+    true);
+  stl.ts = stl.ts.filter(function(t) {
+    return t.normal.dot(new THREE.Vector3(0, 0, 1)) != 1;
+  });
+  stl.material = this.material;
+  stl.wireframe = true;
+  return stl;
+};
+
 var FireDetector = function(height) {
   this.type = "FireDetector";
   this.desc = "FD";
