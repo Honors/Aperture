@@ -7,6 +7,7 @@ var ShadowCaster = function(triangle, plane, camera) {
   this.cameraOrigin = camera;
 };
 ShadowCaster.prototype.shootThrough = function(point) {
+  // TODO: this algorithm may not account for different planes' zs
   var direction = point.clone().sub(this.cameraOrigin),
       extended = direction.clone().multiplyScalar((this.plane - this.cameraOrigin.z)/direction.z);
   return extended.add(this.cameraOrigin);
