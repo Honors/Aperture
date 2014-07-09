@@ -327,3 +327,25 @@ GasDetector.prototype.STL = function() {
   return stl;
 };
 
+var SoundDetector = function(magnitude) {
+  this.type = "SoundDetector";
+  this.desc = "SD";
+  this.f = function(h, t) {
+    h *= Math.PI * 2;
+    var theta = Math.PI * t,
+	x = 2*cos(theta) - cos(2*theta),
+	y = 2*sin(theta) - sin(2*theta);
+    return new THREE.Vector3(
+      Math.cos(h) * y,
+      Math.sin(h) * y,
+      x).multiplyScalar(magnitude/4);
+  };
+};
+SoundDetector.prototype.STL = function() {
+  var stl = Obstruction.prototype.STL.apply(this, arguments);
+  stl.material = new THREE.MeshBasicMaterial({
+    color: 0x0000ff, transparent: true, opacity: 0.6
+  });
+  return stl;
+};
+

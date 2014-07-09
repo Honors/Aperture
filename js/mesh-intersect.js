@@ -103,14 +103,14 @@ var clear = function() {
   ctx.translate(-250, -250);
 };
 var render = function() {
-  var obs = new Rectangle(100, 100, 100),
+  var obs = new SoundDetector(100),
       basis = formBasis(new THREE.Vector3(1, 1, 1)),
       pos = new THREE.Vector3(0, 0, -1);
   obs.position = pos;
   obs.basis = basis;
+
   var ps = new MeshIntersector(
     obs.STL(100, pos, basis), 0).intersect();
-
   ps.forEach(function(p) {
     p.add(new THREE.Vector3(250, 250, 0));
   });
