@@ -7,10 +7,14 @@ var ShadowCaster = function(triangle, plane, camera) {
   this.cameraOrigin = camera;
 };
 ShadowCaster.prototype.shootThrough = function(point) {
-  // TODO: this algorithm may not account for different planes' zs
   var direction = point.clone().sub(this.cameraOrigin),
       extended = direction.clone().multiplyScalar((this.plane - this.cameraOrigin.z)/direction.z);
   return extended.add(this.cameraOrigin);
+};
+ShadowCaster.prototype.intersectSide = function(a, b) {
+  var sideDirection = b.clone().sub(a),
+      zToTravel = this.plane - a.z;
+  return sideDirection.clone().multiplyScalar(zToTravel/sideDirection.z).add(a);
 };
 ShadowCaster.prototype.cast = function() {
   var intersections = this.points.filter(function(p) {
@@ -33,24 +37,28 @@ ShadowCaster.prototype.cast = function() {
     } else if( intersections.length == 2 && beneaths.length == 1 ) {
       return intersections;
     } else if( intersections.length == 1 && beneaths.length == 1 ) {
-      var intersectingSideDirection = beneaths[0].clone().sub(aboves[0]),
-          sideIntersection = intersectingSideDirection.clone().multiplyScalar(-aboves[0].z/intersectingSideDirection.z).add(aboves[0]);
+      var sideIntersection = this.intersectSide(aboves[0], beneaths[0]);
       var tri = new Triangle(intersections[0], aboves[0], sideIntersection);
       renderPath(tri.points);
       return new ShadowCaster(tri, this.plane, this.cameraOrigin).cast();
     } else if( beneaths.length == 2 ) {
-      var intersectingSideDirection1 = beneaths[0].clone().sub(aboves[0]),
-          intersectingSideDirection2 = beneaths[1].clone().sub(aboves[0]),
-          sideIntersection1 = intersectingSideDirection1.clone().multiplyScalar(-aboves[0].z/intersectingSideDirection1.z).add(aboves[0]),
-          sideIntersection2 = intersectingSideDirection2.clone().multiplyScalar(-aboves[0].z/intersectingSideDirection2.z).add(aboves[0]);
-      return new ShadowCaster(new Triangle(aboves[0], sideIntersection1, sideIntersection2), this.plane, this.cameraOrigin).cast();
+      var sideIntersection1 = this.intersectSide(aboves[0], beneaths[0]);
+      var sideIntersection2 = this.intersectSide(aboves[0], beneaths[1]);
+      return new ShadowCaster(
+        new Triangle(aboves[0], sideIntersection1, sideIntersection2),
+	this.plane,
+	this.cameraOrigin).cast();
     } else if( beneaths.length == 1 ) {
-      var intersectingSideDirection1 = beneaths[0].clone().sub(aboves[0]),
-          intersectingSideDirection2 = beneaths[0].clone().sub(aboves[1]),
-          sideIntersection1 = intersectingSideDirection1.clone().multiplyScalar(-aboves[0].z/intersectingSideDirection1.z).add(aboves[0]),
-          sideIntersection2 = intersectingSideDirection2.clone().multiplyScalar(-aboves[1].z/intersectingSideDirection2.z).add(aboves[1]);
-      var tri1 = new ShadowCaster(new Triangle(sideIntersection1, aboves[0], sideIntersection2), this.plane, this.cameraOrigin).cast();
-      var tri2 = new ShadowCaster(new Triangle(sideIntersection1, aboves[1], sideIntersection2), this.plane, this.cameraOrigin).cast();
+      var sideIntersection1 = this.intersectSide(aboves[0], beneaths[0]);
+      var sideIntersection2 = this.intersectSide(aboves[1], beneaths[0]);
+      var tri1 = new ShadowCaster(
+        new Triangle(sideIntersection1, aboves[0], sideIntersection2),
+	this.plane,
+	this.cameraOrigin).cast();
+      var tri2 = new ShadowCaster(
+        new Triangle(sideIntersection1, aboves[1], sideIntersection2),
+	this.plane,
+	this.cameraOrigin).cast();
       return tri1.concat(tri2);
     }
   } else {
